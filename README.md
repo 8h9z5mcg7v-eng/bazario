@@ -4,24 +4,23 @@ Azərbaycan dilində onlayn mağaza yaratma platforması.
 
 ## Hazırkı mərhələ
 
-Bu repository-də ilkin, mobil uyğun frontend prototipi yerləşir:
-- BAZARIO ana səhifəsi və məhsul vitrin nümunəsi
-- Demo mağaza yaratma formu
-- Brauzerdə saxlanılan demo satıcı paneli
-- Məhsul əlavə etmə üçün ilkin demo axını
-- Məhsul/sifariş/mağaza linki bölmələri
+Bu repository-də mobil uyğun frontend prototipi və ilkin backend sxemi var:
+- BAZARIO ana səhifəsi və nümunə məhsul vitrini
+- Demo mağaza yaratma formu və brauzerdə saxlanılan satıcı paneli
+- Demo məhsul əlavə etmə, şəkil önizləməsi və sifariş ssenarisi
+- GitHub Pages üzərindən yayımlanan demo
+- supabase/migrations/20261109000000_initial_schema.sql — satıcı profilləri, mağazalar, məhsullar, sifarişlər, admin rolu, Row Level Security və serverdə qiymət hesablayan sifariş funksiyası üçün ilkin SQL sxemi
 
 ## Vacib məhdudiyyət
 
-Bu hələ istehsala hazır e-ticarət sistemi deyil. Qeydiyyat və məlumatlar yalnız istifadəçinin brauzerində localStorage vasitəsilə saxlanılır. Real autentifikasiya, server bazası, şəkil yükləmə, ictimai mağaza səhifələri, real sifariş qəbulu, admin təsdiqi və ödənişlər hələ qoşulmayıb. Demo linki real mağaza ünvanı deyil.
+Frontend hələ localStorage demo rejimindədir. Real qeydiyyat/giriş, server bazası, Storage şəkil yükləməsi, ictimai mağaza URL-ləri, real sifariş API-si və admin paneli sayta qoşulmayıb. SQL sxemi repository-dədir, lakin Supabase layihəsinə tətbiq edilməyib. Demo linki real mağaza linki deyil.
 
-## Növbəti texniki mərhələlər
+## Növbəti mərhələlər
 
-1. Backend və verilənlər bazası seçimi.
-2. Təhlükəsiz satıcı qeydiyyatı və giriş.
-3. Məhsul şəkillərinin yüklənməsi və ictimai mağaza səhifəsi.
-4. Müştəri sifarişlərinin serverdə saxlanması.
-5. Admin paneli və mağaza təsdiqi.
-6. Ödənişli paketlər və ödəniş provayderi inteqrasiyası.
+1. Supabase Free limitlərini və layihə qurulmasını təsdiqləmək.
+2. SQL sxemini yeni verilənlər bazasına tətbiq etmək və təhlükəsizlik siyasətlərini yoxlamaq.
+3. Auth, Storage və real mağaza səhifələrini frontend-ə qoşmaq.
+4. Sifarişlərin satıcı panelində görünməsi və admin təsdiqi.
+5. Ödənişli paketlər və ödəniş provayderi inteqrasiyası.
 
 Ödənişli xidmətlər, domen alışı və production deploy ayrıca təsdiq tələb edir.
