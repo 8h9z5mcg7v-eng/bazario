@@ -18,6 +18,15 @@ This folder contains the first PostgreSQL/Supabase schema migration for BAZARIO.
 - Before a public launch, add request throttling/anti-bot protection, storage upload policies, order-status workflows, email verification settings, and a backup/export routine.
 - No paid service, domain, account, or production deployment is created by this commit.
 
+## Supabase Free plan check — 9 November 2026
+
+The official documentation currently lists two active Free projects, 500 MB database size per project, 1 GB Storage, 5 GB egress, 50,000 monthly active users, and 500,000 Edge Function invocations. Free projects can be paused after seven days of low database activity, and automatic daily backups are not included. Quotas are subject to change; exceeding Free limits can lead to service restrictions.
+
+Official references:
+- https://supabase.com/docs/guides/platform/billing-on-supabase
+- https://supabase.com/docs/guides/platform/free-project-pausing
+- https://supabase.com/docs/guides/platform/backups
+
 ## Applying it later from an iPhone
 1. Open the Supabase dashboard in Safari and create/select a project only after explicitly deciding to use Supabase Free.
 2. Open **SQL Editor** and create a new query.
