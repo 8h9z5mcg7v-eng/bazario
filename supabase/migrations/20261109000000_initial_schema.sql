@@ -167,10 +167,12 @@ set search_path = ''
 as $$
 begin
   if auth.uid() is not null and not private.is_admin() then
-    if new.owner_id is distinct from old.owner_id
+    if new.id is distinct from old.id
+       or new.owner_id is distinct from old.owner_id
+       or new.created_at is distinct from old.created_at
        or new.status is distinct from old.status
        or new.approved_at is distinct from old.approved_at then
-      raise exception 'Only an administrator can change store ownership or approval status'
+      raise exception 'Only an administrator can change protected store fields'
         using errcode = '42501';
     end if;
   end if;
@@ -189,6 +191,30 @@ revoke all on function private.guard_store_admin_fields() from public, anon, aut
 create trigger stores_guard_admin_fields
 before update on public.stores
 for each row execute function private.guard_store_admin_fields();
+
+create or replace function private.guard_product_identity()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
+begin
+  if auth.uid() is not null and not private.is_admin() then
+    if new.id is distinct from old.id
+       or new.store_id is distinct from old.store_id
+       or new.created_at is distinct from old.created_at then
+      raise exception 'Only an administrator can change product identity or store ownership'
+        using errcode = '42501';
+    end if;
+  end if;
+  return new;
+end;
+$;
+revoke all on function private.guard_product_identity() from public, anon, authenticated;
+
+create trigger products_guard_identity
+before update on public.products
+for each row execute function private.guard_product_identity();
 
 alter table public.profiles enable row level security;
 alter table public.admin_users enable row level security;
@@ -391,11 +417,23 @@ begin
   from public.stores s
   where s.slug = pg_catalog.lower(btrim(p_store_slug))
     and s.status = 'approved'
-  limit 1;
+  limit 1
+  for share;
 
   if v_store_id is null then
     raise exception 'Store not found or not approved' using errcode = 'P0002';
   end if;
+
+  -- Lock the selected product rows so prices/availability cannot change
+  -- between validation, total calculation, and snapshot insertion.
+  perform p.id
+  from pg_catalog.jsonb_to_recordset(p_items) as x(product_id uuid, quantity integer)
+  join public.products p
+    on p.id = x.product_id
+   and p.store_id = v_store_id
+   and p.is_active
+  order by p.id
+  for share of p;
 
   select count(*)::integer, coalesce(sum(p.price * x.quantity), 0)
   into v_valid_count, v_total
