@@ -197,7 +197,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 begin
   if auth.uid() is not null and not private.is_admin() then
     if new.id is distinct from old.id
@@ -209,7 +209,7 @@ begin
   end if;
   return new;
 end;
-$;
+$$;
 revoke all on function private.guard_product_identity() from public, anon, authenticated;
 
 create trigger products_guard_identity
