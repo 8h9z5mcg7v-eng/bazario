@@ -6,6 +6,7 @@ This folder contains the first PostgreSQL/Supabase schema migration for BAZARIO.
 - Seller profiles created automatically when an Auth user signs up.
 - Store records with unique, shareable slugs and an administrator-controlled approval state.
 - Products owned by a store, with an image storage path (not a base64 image).
+- A public `bazario-products` image bucket, limited to JPEG/PNG/WebP files up to 1 MB; only the owning seller can upload, replace, or delete files inside that store's UUID folder.
 - Customer orders and immutable product-name/price snapshots.
 - Row Level Security policies separating public storefront data, each seller's data, and administrators.
 - A public checkout function that validates products and calculates prices on the server.
@@ -30,8 +31,10 @@ Official references:
 ## Applying it later from an iPhone
 1. Open the Supabase dashboard in Safari and create/select a project only after explicitly deciding to use Supabase Free.
 2. Open **SQL Editor** and create a new query.
-3. Open the migration file in GitHub, copy the full file, and paste it into SQL Editor.
-4. Review the SQL, then run it once on the new project.
-5. Keep all secret/service-role keys out of the BAZARIO website and GitHub.
+3. Run `20261109000000_initial_schema.sql` first, then run `20261110000000_product_image_storage.sql` in a separate query.
+4. Review each SQL file before running it. These migrations have not been applied to a live database yet.
+5. Product image paths must use the store UUID as the first folder, for example `STORE_UUID/PRODUCT_UUID.webp`.
+6. The image bucket is public for storefront display, so anyone who obtains an image URL can view that image. Do not upload private documents or personal photos.
+7. Keep all secret/service-role keys out of the BAZARIO website and GitHub.
 
 Supabase Free is not a production uptime guarantee: free projects may pause after one week of inactivity and do not include automatic backups. Check current limits before relying on it for customer orders.
