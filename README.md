@@ -10,10 +10,11 @@ Bu repository-də mobil uyğun frontend prototipi və ilkin backend sxemi var:
 - Demo məhsul əlavə etmə, şəkil önizləməsi və sifariş ssenarisi
 - GitHub Pages üzərindən yayımlanan demo
 - supabase/migrations/20261109000000_initial_schema.sql — satıcı profilləri, mağazalar, məhsullar, sifarişlər, admin rolu, Row Level Security və serverdə qiymət hesablayan sifariş funksiyası üçün ilkin SQL sxemi
+- supabase/migrations/20261110000000_product_image_storage.sql — satıcıya məxsus məhsul şəkilləri üçün 1 MB-lıq Storage bucket və sahiblik siyasətləri
 
 ## Vacib məhdudiyyət
 
-Frontend hələ localStorage demo rejimindədir. Real qeydiyyat/giriş, server bazası, Storage şəkil yükləməsi, ictimai mağaza URL-ləri, real sifariş API-si və admin paneli sayta qoşulmayıb. SQL sxemi repository-dədir, lakin Supabase layihəsinə tətbiq edilməyib. Demo linki real mağaza linki deyil.
+Frontend hələ localStorage demo rejimindədir. Real qeydiyyat/giriş, server bazası, Storage şəkil yükləməsi, ictimai mağaza URL-ləri, real sifariş API-si və admin paneli sayta qoşulmayıb. İlkin baza və şəkil Storage miqrasiyaları repository-dədir, lakin Supabase layihəsinə tətbiq edilməyib. Demo linki real mağaza linki deyil.
 
 ## Növbəti mərhələlər
 
