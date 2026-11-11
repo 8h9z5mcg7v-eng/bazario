@@ -10,13 +10,14 @@ This folder contains the first PostgreSQL/Supabase schema migration for BAZARIO.
 - Customer orders and immutable product-name/price snapshots.
 - Row Level Security policies separating public storefront data, each seller's data, and administrators.
 - A public checkout function that validates products and calculates prices on the server.
+- A guarded seller order-status RPC: sellers can confirm, prepare, ship, complete, or cancel orders only through valid state transitions; administrators can override statuses.
 
 ## Important boundaries
 - This is a schema file only. It does not create a Supabase project, configure email delivery, create a Storage bucket, connect the website, or deploy a backend.
 - The current BAZARIO website is still a browser-only demo using localStorage. Real sign-in, image upload, public shop routes, and server-backed orders are not connected yet.
 - Admin membership must be added from trusted SQL/service-role access after the administrator has signed up. Never expose a service-role key in the browser.
 - The migration is intended for a new, empty Supabase project. Do not run it twice on the same database.
-- Before a public launch, add request throttling/anti-bot protection, storage upload policies, order-status workflows, email verification settings, and a backup/export routine.
+- Before a public launch, add request throttling/anti-bot protection, email verification settings, and a backup/export routine.
 - No paid service, domain, account, or production deployment is created by this commit.
 
 ## Supabase Free plan check — 9 November 2026
@@ -31,10 +32,11 @@ Official references:
 ## Applying it later from an iPhone
 1. Open the Supabase dashboard in Safari and create/select a project only after explicitly deciding to use Supabase Free.
 2. Open **SQL Editor** and create a new query.
-3. Run `20261109000000_initial_schema.sql` first, then run `20261110000000_product_image_storage.sql` in a separate query.
+3. Run the three migration files in timestamp order, each in a separate SQL Editor query: `20261109000000_initial_schema.sql`, `20261110000000_product_image_storage.sql`, then `20261111000000_seller_order_status_workflow.sql`.
 4. Review each SQL file before running it. These migrations have not been applied to a live database yet.
 5. Product image paths must use the store UUID as the first folder, for example `STORE_UUID/PRODUCT_UUID.webp`.
 6. The image bucket is public for storefront display, so anyone who obtains an image URL can view that image. Do not upload private documents or personal photos.
-7. Keep all secret/service-role keys out of the BAZARIO website and GitHub.
+7. Sellers change order status only through `seller_update_order_status` RPC; direct table updates are revoked.
+8. Keep all secret/service-role keys out of the BAZARIO website and GitHub.
 
 Supabase Free is not a production uptime guarantee: free projects may pause after one week of inactivity and do not include automatic backups. Check current limits before relying on it for customer orders.
