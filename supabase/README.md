@@ -15,10 +15,10 @@ This folder contains the first PostgreSQL/Supabase schema migration for BAZARIO.
 ## Important boundaries
 - This is a schema file only. It does not create a Supabase project, configure email delivery, create a Storage bucket, connect the website, or deploy a backend.
 - The current BAZARIO website is still a browser-only demo using localStorage. Real sign-in, image upload, public shop routes, and server-backed orders are not connected yet.
-- Admin membership must be added from trusted SQL/service-role access after the administrator has signed up. Never expose a service-role key in the browser.
+- Admin membership must be added from trusted SQL/service-role access after that person has signed up. Never expose a service-role key in the browser.
 - The migration is intended for a new, empty Supabase project. Do not run it twice on the same database.
 - Before a public launch, add request throttling/anti-bot protection, email verification settings, and a backup/export routine.
-- No paid service, domain, account, or production deployment is created by this commit.
+- No paid service, domain, account, or production deployment is created by this work.
 
 ## Supabase Free plan check — 9 November 2026
 
@@ -38,5 +38,10 @@ Official references:
 6. The image bucket is public for storefront display, so anyone who obtains an image URL can view that image. Do not upload private documents or personal photos.
 7. Sellers change order status only through `seller_update_order_status` RPC; direct table updates are revoked.
 8. Keep all secret/service-role keys out of the BAZARIO website and GitHub.
+
+## Verify the installation
+After all three migrations have completed, open a new SQL Editor query and run `verify_installation.sql`. It is a read-only check for the six tables, RLS policies, image bucket, Auth trigger, and function/table privileges. A successful run ends with a `BAZARIO verification passed` notice. It does not create or modify anything.
+
+The verification script is not a substitute for a real two-account security test. Before launch, test that one seller cannot read or change another seller's products, orders, or images, and that an unapproved store is not publicly visible.
 
 Supabase Free is not a production uptime guarantee: free projects may pause after one week of inactivity and do not include automatic backups. Check current limits before relying on it for customer orders.
