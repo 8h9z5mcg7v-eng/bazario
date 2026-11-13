@@ -29,6 +29,20 @@ Official references:
 - https://supabase.com/docs/guides/platform/free-project-pausing
 - https://supabase.com/docs/guides/platform/backups
 
+## Supabase Auth frontend connection
+
+The website now contains an optional email/password Auth flow and seller-store creation flow. It remains in demo mode until a Supabase project has been created, all three migrations have been applied, and the public browser settings below are filled in.
+
+1. In the Supabase dashboard, open the project's API settings and copy the **Project URL** and the public **anon/publishable key**.
+2. Open `supabase/config.js` in GitHub and enter those two values in `url` and `anonKey`.
+3. Save the file. The browser uses the Supabase JavaScript v2 library from jsDelivr.
+4. Open the site after the frontend change has been reviewed and deployed. Select **Mağaza yarat**, register with email/password, confirm the email if required, and sign in.
+5. The first store is created with status `pending`; the admin approval process is not yet connected to the website.
+
+The anon/publishable key is designed to be used in browser code; database access must remain protected by the included RLS policies. **Never paste a service_role/secret key into `config.js`, HTML, or any public repository.** Do not share a password or key in ChatGPT.
+
+The Auth flow and store creation have only been statically checked. They have not been tested against a live Supabase project because no project exists yet. Product CRUD, image uploads, public storefront routes, customer checkout, seller order management, and admin approval UI remain future integration work.
+
 ## Applying it later from an iPhone
 1. Open the Supabase dashboard in Safari and create/select a project only after explicitly deciding to use Supabase Free.
 2. Open **SQL Editor** and create a new query.
