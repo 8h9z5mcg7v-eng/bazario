@@ -13,10 +13,12 @@ Bu repository-də mobil uyğun frontend prototipi və ilkin backend sxemi var:
 - `supabase/migrations/20261110000000_product_image_storage.sql` — satıcıya məxsus məhsul şəkilləri üçün 1 MB-lıq Storage bucket və sahiblik siyasətləri
 - `supabase/migrations/20261111000000_seller_order_status_workflow.sql` — satıcının sifarişləri mərhələli idarə etməsi üçün təhlükəsiz status dəyişmə funksiyası
 - `supabase/verify_installation.sql` — miqrasiyalardan sonra cədvəlləri, RLS, Storage və icazələri yoxlayan read-only SQL skripti
+- `supabase/config.js` — Supabase URL və public anon/publishable key üçün boş, təhlükəsiz konfiqurasiya nümunəsi
+- Saytda opsional Supabase email/şifrə qeydiyyatı, giriş, sessiyanın bərpası və ilk mağazanın `pending` statusu ilə yaradılması
 
 ## Vacib məhdudiyyət
 
-Frontend hələ localStorage demo rejimindədir. Real qeydiyyat/giriş, server bazası, Storage şəkil yükləməsi, ictimai mağaza URL-ləri, real sifariş API-si və admin paneli sayta qoşulmayıb. İlkin baza, şəkil Storage və sifariş statusu miqrasiyaları repository-dədir, lakin Supabase layihəsinə tətbiq edilməyib. Demo linki real mağaza linki deyil.
+Frontend demo rejimini saxlayır və Supabase Auth yalnız `supabase/config.js` real Project URL və public anon/publishable key ilə doldurulduqdan, miqrasiyalar Supabase-ə tətbiq edildikdən sonra işləyə bilər. Auth qeydiyyatı/girişi və ilk mağazanın `pending` statusu ilə yaradılması üçün kod əlavə olunub, lakin canlı Supabase layihəsi olmadığına görə real bağlantı sınaqdan keçirilməyib. Məhsul CRUD, Storage yükləməsi, ictimai mağaza URL-ləri, real sifariş API-si və admin paneli hələ qoşulmayıb.
 
 ## Növbəti mərhələlər
 
