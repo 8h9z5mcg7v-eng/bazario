@@ -18,29 +18,293 @@ section{padding:68px 0}.section-head{text-align:center;max-width:650px;margin:0 
 <div class="preview"><div class="preview-top"><span>✨ Sənin mağazan</span><span class="live">● Nümunə mağaza</span></div><div class="preview-banner"><small>YENİ KOLLEKSİYA</small><h3>Seçilmiş məhsullar</h3><div>Gündəlik seçimlər, bir ünvanda.</div></div><div class="products"><div class="product"><div class="product-art">👜</div><b>Gündəlik çanta</b><small>35,00 ₼</small></div><div class="product"><div class="product-art">⌚</div><b>Klassik saat</b><small>59,00 ₼</small></div></div></div></div></header>
 <main id="landing"><section id="nece"><div class="wrap"><div class="section-head"><h2>Satışa başlamaq 3 addımda</h2><p>Mağazanı qur, məhsullarını əlavə et və linkini müştərilərlə paylaş.</p></div><div class="features"><article class="feature"><div class="feature-icon">🏪</div><h3>Mağazanı yarat</h3><p>Mağazana ad ver, özünə uyğun ünvan seç və vitrinini hazırla.</p></article><article class="feature"><div class="feature-icon">📦</div><h3>Məhsullarını əlavə et</h3><p>Məhsul şəkli, adı, qiyməti və qısa təsvirini daxil et.</p></article><article class="feature"><div class="feature-icon">🔗</div><h3>Linkini paylaş</h3><p>Mağaza linkini sosial şəbəkələrdə paylaş və sifarişləri qəbul et.</p></article></div></div></section>
 <section id="imkanlar"><div class="wrap"><div class="cta"><div><h2>Kiçik biznesini onlayna daşı</h2><p>BAZARIO ilə öz rəqəmsal vitrininə ilk addımı at.</p></div><button class="btn btn-primary" id="ctaStart">İndi başla&nbsp; →</button></div></div></section></main>
-<section class="dashboard" id="dashboard"><div class="wrap"><div class="dash-top"><div><div class="eyebrow" style="color:#c45a3a">SATICI PANELİ · DEMO</div><h2 id="dashTitle" style="margin:5px 0">Mağazan</h2></div><button class="btn btn-outline" style="background:#fff;color:#172033;border-color:#dce1ea" id="backBtn">← Ana səhifə</button></div><div class="dash-grid"><aside class="side"><button class="active" data-tab="overview">İcmal</button><button data-tab="products">Məhsullar</button><button data-tab="orders">Sifarişlər</button><button data-tab="store">Mağaza linki</button></aside><div class="panel" id="dashContent"></div></div></div></section>
+<section class="dashboard" id="dashboard"><div class="wrap"><div class="dash-top"><div><div class="eyebrow" id="dashMode" style="color:#c45a3a">SATICI PANELİ · DEMO</div><h2 id="dashTitle" style="margin:5px 0">Mağazan</h2></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline" style="display:none;background:#fff;color:#172033;border-color:#dce1ea" id="logoutBtn">Çıxış</button><button class="btn btn-outline" style="background:#fff;color:#172033;border-color:#dce1ea" id="backBtn">← Ana səhifə</button></div></div><div class="dash-grid"><aside class="side"><button class="active" data-tab="overview">İcmal</button><button data-tab="products">Məhsullar</button><button data-tab="orders">Sifarişlər</button><button data-tab="store">Mağaza linki</button></aside><div class="panel" id="dashContent"></div></div></div></section>
 <div class="footer wrap"><span>© 2026 BAZARIO. Bütün hüquqlar qorunur.</span><span>Azərbaycan dilində onlayn mağaza platforması</span></div>
-<div class="modal-backdrop" id="productModal"><div class="modal"><div class="modal-head"><h2>Məhsul əlavə et</h2><button class="close" id="closeProduct">×</button></div><form id="productForm"><div class="field"><label for="pname">Məhsulun adı</label><input id="pname" required placeholder="Məsələn, Dəri çanta"></div><div class="field"><label for="pprice">Qiymət (AZN)</label><input id="pprice" type="number" min="0.01" step="0.01" required placeholder="35"></div><div class="field"><label for="pdesc">Təsvir</label><textarea id="pdesc" rows="3" placeholder="Məhsul haqqında qısa məlumat"></textarea></div><div class="field"><label for="pimage">Məhsul şəkli</label><input id="pimage" type="file" accept="image/*"><div class="hint">Demo üçün maksimum 1 MB şəkil.</div><img id="pimagePreview" alt="" style="display:none;width:100%;max-height:170px;object-fit:contain;margin-top:10px;border-radius:10px;background:#f4f5f7"></div><button class="btn btn-primary wide" type="submit">Məhsulu yadda saxla</button></form></div></div><div class="modal-backdrop" id="storeModal"><div class="modal"><div class="modal-head"><h2 id="publicStoreTitle">Mağaza vitrini</h2><button class="close" id="closeStore">×</button></div><div id="publicStoreBody"></div></div></div><div class="modal-backdrop" id="modal"><div class="modal"><div class="modal-head"><h2 id="modalTitle">Mağazanı yarat</h2><button class="close" id="closeModal">×</button></div><form id="shopForm"><div class="field"><label for="owner">Adın</label><input id="owner" required placeholder="Məsələn, Aysel"></div><div class="field"><label for="shop">Mağazanın adı</label><input id="shop" required placeholder="Məsələn, Mirvari Store"></div><div class="field"><label for="slug">Mağaza ünvanı</label><input id="slug" required placeholder="mirvari-store"><div class="hint">Linkin belə görünəcək: bazario.az/mirvari-store</div></div><div class="field"><label for="email">E-poçt</label><input id="email" type="email" required placeholder="ad@example.com"></div><p class="hint">Bu ilkin nümayiş versiyasıdır. Qeydiyyat məlumatları yalnız bu brauzerdə saxlanılır; real hesab və server bağlantısı hələ qurulmayıb.</p><button class="btn btn-primary wide" type="submit">Demo mağazanı yarat</button></form></div></div>
+<div class="modal-backdrop" id="productModal"><div class="modal"><div class="modal-head"><h2>Məhsul əlavə et</h2><button class="close" id="closeProduct">×</button></div><form id="productForm"><div class="field"><label for="pname">Məhsulun adı</label><input id="pname" required placeholder="Məsələn, Dəri çanta"></div><div class="field"><label for="pprice">Qiymət (AZN)</label><input id="pprice" type="number" min="0.01" step="0.01" required placeholder="35"></div><div class="field"><label for="pdesc">Təsvir</label><textarea id="pdesc" rows="3" placeholder="Məhsul haqqında qısa məlumat"></textarea></div><div class="field"><label for="pimage">Məhsul şəkli</label><input id="pimage" type="file" accept="image/*"><div class="hint">Demo üçün maksimum 1 MB şəkil.</div><img id="pimagePreview" alt="" style="display:none;width:100%;max-height:170px;object-fit:contain;margin-top:10px;border-radius:10px;background:#f4f5f7"></div><button class="btn btn-primary wide" type="submit">Məhsulu yadda saxla</button></form></div></div><div class="modal-backdrop" id="storeModal"><div class="modal"><div class="modal-head"><h2 id="publicStoreTitle">Mağaza vitrini</h2><button class="close" id="closeStore">×</button></div><div id="publicStoreBody"></div></div></div><div class="modal-backdrop" id="modal"><div class="modal"><div class="modal-head"><h2 id="modalTitle">Mağazanı yarat</h2><button class="close" id="closeModal">×</button></div><form id="shopForm"><div id="storeFields"><div class="field"><label for="owner">Adın</label><input id="owner" required placeholder="Məsələn, Aysel"></div><div class="field"><label for="shop">Mağazanın adı</label><input id="shop" required placeholder="Məsələn, Mirvari Store"></div><div class="field"><label for="slug">Mağaza ünvanı</label><input id="slug" required placeholder="mirvari-store"><div class="hint">Mağaza ünvanı yalnız latın hərfləri, rəqəmlər və tire ilə yaradılır.</div></div></div><div id="accountFields"><div class="field" id="emailField"><label for="email">E-poçt</label><input id="email" type="email" placeholder="ad@example.com"></div><div class="field" id="passwordField"><label for="password">Şifrə</label><input id="password" type="password" minlength="8" autocomplete="new-password" placeholder="Ən azı 8 simvol"></div></div><p class="hint" id="shopFormNotice">Demo rejimində məlumatlar yalnız bu brauzerdə saxlanılır.</p><button class="btn btn-primary wide" id="shopSubmit" type="submit">Demo mağazanı yarat</button></form></div></div><div class="modal-backdrop" id="authModal"><div class="modal"><div class="modal-head"><h2>Satıcı girişi</h2><button class="close" id="closeAuth">×</button></div><form id="authForm"><div class="field"><label for="loginEmail">E-poçt</label><input id="loginEmail" type="email" autocomplete="username" required placeholder="ad@example.com"></div><div class="field"><label for="loginPassword">Şifrə</label><input id="loginPassword" type="password" autocomplete="current-password" required></div><p class="hint" id="authNotice">Supabase bağlantısı qurulduqdan sonra real hesabla giriş edə bilərsən.</p><button class="btn btn-primary wide" type="submit">Giriş et</button><button class="btn btn-light wide" style="margin-top:8px" id="authSignupBtn" type="button">Hesab yarat</button></form></div></div>
+<script src="./supabase/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const $=s=>document.querySelector(s);let data=JSON.parse(localStorage.getItem('bazario_demo')||'null');
-const save=()=>localStorage.setItem('bazario_demo',JSON.stringify(data));
-function openModal(){ $('#modal').classList.add('show'); }function closeModal(){ $('#modal').classList.remove('show'); }
-['#startBtn','#heroStart','#ctaStart'].forEach(s=>$(s).addEventListener('click',openModal));
-$('#loginBtn').addEventListener('click',()=>{if(data)showDashboard();else openModal()});$('#closeModal').onclick=closeModal;$('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()});
-$('#shop').addEventListener('input',e=>{if(!$('#slug').dataset.edited)$('#slug').value=e.target.value.toLowerCase().trim().replace(/[^a-z0-9əğıöşüç]+/g,'-').replace(/^-|-$/g,'')});
-$('#slug').addEventListener('input',e=>e.target.dataset.edited='1');
-$('#shopForm').addEventListener('submit',e=>{e.preventDefault();data={owner:$('#owner').value.trim(),shop:$('#shop').value.trim(),slug:$('#slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'-'),email:$('#email').value.trim(),products:[],orders:[],approved:false};save();closeModal();showDashboard();});
-function showDashboard(){if(!data){openModal();return}$('#landing').style.display='none';$('#dashboard').classList.add('show');$('#dashTitle').textContent=data.shop;renderTab('overview');window.scrollTo(0,0)}
-$('#demoBtn').onclick=()=>{if(!data){data={owner:'Demo istifadəçi',shop:'Nümunə mağaza',slug:'numune-magaza',email:'demo@example.com',products:[{name:'Gündəlik çanta',price:'35',description:'Rahat və zövqlü çanta.'},{name:'Klassik saat',price:'59',description:'Gündəlik istifadə üçün.'}],orders:[],approved:false};save()}showDashboard()};
-$('#backBtn').onclick=()=>{$('#dashboard').classList.remove('show');$('#landing').style.display='block';window.scrollTo(0,0)};
-document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderTab(b.dataset.tab)}));
-function renderTab(tab){let c=$('#dashContent');if(tab==='overview'){c.innerHTML='<h3>Salam, '+esc(data.owner)+'! 👋</h3><div class="stats"><div class="stat"><small>Məhsullar</small><strong>'+data.products.length+'</strong></div><div class="stat"><small>Sifarişlər</small><strong>'+data.orders.length+'</strong></div><div class="stat"><small>Mağaza statusu</small><strong style="font-size:16px">'+(data.approved?'Aktiv':'Təsdiq gözləyir')+'</strong></div></div><p class="hint">Mağazanı tamamlamaq üçün məhsullarını əlavə et və linkini paylaş.</p><button class="btn btn-primary" id="addProduct">+ Məhsul əlavə et</button>';}else if(tab==='products'){c.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><h3>Məhsulların</h3><button class="btn btn-primary" id="addProduct">+ Əlavə et</button></div>'+(data.products.length?'<table class="table"><tr><th>Məhsul</th><th>Qiymət</th></tr>'+data.products.map(p=>'<tr><td>'+(p.image?'<img src="'+p.image+'" alt="" style="width:42px;height:42px;object-fit:cover;border-radius:7px;vertical-align:middle;margin-right:8px">':'')+esc(p.name)+'</td><td>'+esc(p.price)+' ₼</td></tr>').join('')+'</table>':'<div class="empty">Hələ məhsul əlavə edilməyib.</div>');}else if(tab==='orders'){c.innerHTML='<h3>Müştəri sifarişləri</h3>'+(data.orders.length?data.orders.map(o=>'<div class="store-link" style="margin:10px 0"><b>'+esc(o.name)+'</b> · '+esc(o.product)+' · '+esc(o.phone)+'</div>').join(''):'<div class="empty">Hələ sifariş yoxdur. Müştərilər mağazanı tapdıqca sifarişlər burada görünəcək.</div>');}else{c.innerHTML='<h3>Mağaza linkin</h3><p class="hint">Bu, hazırda yalnız demo vitrindir; ictimai link hələ aktiv deyil.</p><div class="store-link">BAZARIO demo / '+esc(data.slug)+'</div><button class="btn btn-primary" style="margin-top:14px" id="previewStore">Mağaza vitrininə bax</button><p class="hint" style="margin-top:18px">Admin təsdiqi: <b>'+(data.approved?'Təsdiqlənib':'Gözləyir')+'</b></p>'; }let add=$('#addProduct');if(add)add.onclick=addProduct;let pv=$('#previewStore');if(pv)pv.onclick=openPublicStore;let copy=$('#copyLink');if(copy)copy.onclick=()=>navigator.clipboard?.writeText('https://bazario.az/'+data.slug).then(()=>copy.textContent='Kopyalandı');}
+const $=s=>document.querySelector(s);
+const config=window.BAZARIO_SUPABASE_CONFIG||{};
+let supabaseClient=null;
+if(window.supabase&&config.url&&config.anonKey){
+  try{
+    supabaseClient=window.supabase.createClient(config.url,config.anonKey,{
+      auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+    });
+  }catch(error){console.error("BAZARIO Supabase initialization failed",error);}
+}
+let data=JSON.parse(localStorage.getItem('bazario_demo')||'null');
+let currentUser=null;
+let formMode='demo';
 let pendingImage='';
-function addProduct(){pendingImage='';$('#productForm').reset();$('#pimagePreview').style.display='none';$('#productModal').classList.add('show')}
+const save=()=>{if(data&&!data.backend)localStorage.setItem('bazario_demo',JSON.stringify(data));};
+function normalizeSlug(value){
+  return String(value||'').toLowerCase().trim()
+    .replace(/[əƏ]/g,'e').replace(/[ıİ]/g,'i').replace(/[öÖ]/g,'o')
+    .replace(/[üÜ]/g,'u').replace(/[şŞ]/g,'sh').replace(/[çÇ]/g,'ch')
+    .replace(/[ğĞ]/g,'g').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+function openModal(mode){
+  formMode=mode||(!supabaseClient?'demo':(currentUser?'store':'signup'));
+  $('#accountFields').style.display=formMode==='store'?'none':'block';
+  $('#emailField').style.display=formMode==='demo'||formMode==='signup'?'block':'none';
+  $('#passwordField').style.display=formMode==='signup'?'block':'none';
+  $('#email').required=formMode==='demo'||formMode==='signup';
+  $('#password').required=formMode==='signup';
+  $('#modalTitle').textContent=formMode==='signup'?'Satıcı hesabı yarat':formMode==='store'?'Mağazanı yarat':'Demo mağazanı yarat';
+  $('#shopSubmit').textContent=formMode==='signup'?'Qeydiyyatdan keç və mağaza yarat':formMode==='store'?'Mağazanı yarat':'Demo mağazanı yarat';
+  $('#shopFormNotice').textContent=formMode==='signup'
+    ?'E-poçtla qeydiyyatdan keç. E-poçt təsdiqi aktivdirsə, əvvəlcə ünvanını təsdiqləməlisən.'
+    :formMode==='store'
+      ?'Mağaza yaradıldıqdan sonra admin təsdiqinə göndəriləcək.'
+      :'Demo məlumatları yalnız bu brauzerdə saxlanılır; real hesab yaradılmır.';
+  $('#modal').classList.add('show');
+}
+function closeModal(){$('#modal').classList.remove('show');}
+function openAuthModal(){
+  if(!supabaseClient){openModal('demo');return;}
+  $('#authNotice').textContent='Supabase Auth vasitəsilə e-poçt və şifrə ilə giriş.';
+  $('#authModal').classList.add('show');
+}
+function closeAuthModal(){$('#authModal').classList.remove('show');}
+async function beginCreate(){
+  if(!supabaseClient){openModal('demo');return;}
+  if(!currentUser){
+    const result=await supabaseClient.auth.getSession();
+    currentUser=result.data.session?.user||null;
+  }
+  if(currentUser){
+    try{
+      const store=await loadOwnStore(currentUser);
+      if(store){data=store;showDashboard();return;}
+      openModal('store');
+    }catch(error){alert('Mağaza məlumatlarını oxumaq mümkün olmadı: '+error.message);}
+  }else openModal('signup');
+}
+['#startBtn','#heroStart','#ctaStart'].forEach(s=>$(s).addEventListener('click',beginCreate));
+$('#loginBtn').addEventListener('click',()=>{
+  if(supabaseClient)openAuthModal();
+  else if(data)showDashboard();
+  else openModal('demo');
+});
+$('#closeModal').onclick=closeModal;
+$('#closeAuth').onclick=closeAuthModal;
+$('#authSignupBtn').onclick=()=>{closeAuthModal();openModal('signup');};
+$('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal();});
+$('#authModal').addEventListener('click',e=>{if(e.target===$('#authModal'))closeAuthModal();});
+$('#shop').addEventListener('input',e=>{
+  if(!$('#slug').dataset.edited)$('#slug').value=normalizeSlug(e.target.value);
+});
+$('#slug').addEventListener('input',e=>{
+  e.target.dataset.edited='1';
+  e.target.value=normalizeSlug(e.target.value);
+});
+async function updateProfileName(owner){
+  const result=await supabaseClient.from('profiles').update({display_name:owner}).eq('id',currentUser.id);
+  if(result.error)throw result.error;
+}
+async function createStoreForUser(owner,shop,slug){
+  if(!currentUser)throw new Error('Əvvəlcə hesabına daxil ol.');
+  const cleanSlug=normalizeSlug(slug);
+  if(cleanSlug.length<3||cleanSlug.length>40)throw new Error('Mağaza ünvanı 3–40 simvol olmalı və latın hərfləri, rəqəmlər, tire istifadə etməlidir.');
+  await updateProfileName(owner);
+  const result=await supabaseClient.from('stores')
+    .insert({owner_id:currentUser.id,name:shop,slug:cleanSlug,description:''})
+    .select('id,owner_id,name,slug,status,description')
+    .single();
+  if(result.error)throw result.error;
+  data={
+    owner:owner,shop:result.data.name,slug:result.data.slug,email:currentUser.email,
+    products:[],orders:[],approved:result.data.status==='approved',
+    backend:true,storeId:result.data.id,status:result.data.status
+  };
+  closeModal();
+  showDashboard();
+}
+async function loadOwnStore(user){
+  const result=await supabaseClient.from('stores')
+    .select('id,owner_id,name,slug,status,description')
+    .eq('owner_id',user.id).order('created_at',{ascending:false}).limit(1);
+  if(result.error)throw result.error;
+  if(!result.data.length)return null;
+  const profile=await supabaseClient.from('profiles').select('display_name').eq('id',user.id).maybeSingle();
+  if(profile.error)throw profile.error;
+  const store=result.data[0];
+  return {
+    owner:profile.data?.display_name||user.user_metadata?.display_name||'Satıcı',
+    shop:store.name,slug:store.slug,email:user.email,products:[],orders:[],
+    approved:store.status==='approved',backend:true,storeId:store.id,status:store.status
+  };
+}
+$('#shopForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const owner=$('#owner').value.trim();
+  const shop=$('#shop').value.trim();
+  const slug=normalizeSlug($('#slug').value);
+  const email=$('#email').value.trim();
+  const password=$('#password').value;
+  if(formMode==='demo'){
+    data={owner,shop,slug,email,products:[],orders:[],approved:false,backend:false};
+    save();closeModal();showDashboard();return;
+  }
+  const button=$('#shopSubmit');
+  button.disabled=true;
+  try{
+    if(formMode==='signup'){
+      const result=await supabaseClient.auth.signUp({
+        email,password,options:{data:{display_name:owner}}
+      });
+      if(result.error)throw result.error;
+      if(!result.data.session){
+        $('#shopFormNotice').textContent='Qeydiyyat yaradıldı. E-poçtuna gələn təsdiq linkini aç, sonra “Giriş” bölməsindən daxil ol. Təsdiqdən sonra mağaza məlumatlarını yenidən daxil edə bilərsən.';
+        button.textContent='Təsdiq məktubunu gözlə';
+        return;
+      }
+      currentUser=result.data.user;
+    }
+    if(formMode==='store'&&!currentUser){
+      const session=await supabaseClient.auth.getSession();
+      currentUser=session.data.session?.user||null;
+    }
+    await createStoreForUser(owner,shop,slug);
+  }catch(error){
+    alert('Əməliyyat alınmadı: '+(error.message||'Naməlum xəta'));
+  }finally{
+    button.disabled=false;
+  }
+});
+$('#authForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!supabaseClient){alert('Supabase konfiqurasiyası yoxdur.');return;}
+  const button=e.submitter||e.target.querySelector('button[type="submit"]');
+  button.disabled=true;
+  try{
+    const result=await supabaseClient.auth.signInWithPassword({
+      email:$('#loginEmail').value.trim(),password:$('#loginPassword').value
+    });
+    if(result.error)throw result.error;
+    currentUser=result.data.user;
+    closeAuthModal();
+    const store=await loadOwnStore(currentUser);
+    if(store){data=store;showDashboard();}
+    else openModal('store');
+  }catch(error){
+    alert('Giriş alınmadı: '+(error.message||'E-poçt və ya şifrə yanlışdır.'));
+  }finally{button.disabled=false;}
+});
+if(supabaseClient){
+  supabaseClient.auth.onAuthStateChange((_event,session)=>{
+    currentUser=session?.user||null;
+  });
+  (async()=>{
+    try{
+      const result=await supabaseClient.auth.getSession();
+      currentUser=result.data.session?.user||null;
+      if(currentUser){
+        const store=await loadOwnStore(currentUser);
+        if(store){data=store;showDashboard();}
+      }
+    }catch(error){console.warn('BAZARIO session restore failed',error);}
+  })();
+}
+function showDashboard(){
+  if(!data){openModal('demo');return;}
+  $('#landing').style.display='none';
+  $('#dashboard').classList.add('show');
+  $('#dashTitle').textContent=data.shop;
+  $('#dashMode').textContent=data.backend?'SATICI PANELİ · SUPABASE':'SATICI PANELİ · DEMO';
+  $('#logoutBtn').style.display=data.backend?'inline-block':'none';
+  renderTab('overview');
+  window.scrollTo(0,0);
+}
+$('#demoBtn').onclick=()=>{
+  data={owner:'Demo istifadəçi',shop:'Nümunə mağaza',slug:'numune-magaza',email:'demo@example.com',products:[{name:'Gündəlik çanta',price:'35',description:'Rahat və zövqlü çanta.'},{name:'Klassik saat',price:'59',description:'Gündəlik istifadə üçün.'}],orders:[],approved:false,backend:false};
+  save();showDashboard();
+};
+$('#backBtn').onclick=()=>{
+  $('#dashboard').classList.remove('show');$('#landing').style.display='block';window.scrollTo(0,0);
+};
+$('#logoutBtn').onclick=async()=>{
+  if(!supabaseClient)return;
+  const result=await supabaseClient.auth.signOut();
+  if(result.error){alert('Çıxış alınmadı: '+result.error.message);return;}
+  currentUser=null;data=null;
+  $('#dashboard').classList.remove('show');$('#landing').style.display='block';window.scrollTo(0,0);
+};
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('[data-tab]').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');renderTab(b.dataset.tab);
+}));
+function renderTab(tab){
+  let c=$('#dashContent');
+  if(data.backend){
+    if(tab==='overview'){
+      c.innerHTML='<h3>Salam, '+esc(data.owner)+'! 👋</h3><div class="stats"><div class="stat"><small>Məhsullar</small><strong>—</strong></div><div class="stat"><small>Sifarişlər</small><strong>—</strong></div><div class="stat"><small>Mağaza statusu</small><strong style="font-size:16px">'+esc(statusLabel(data.status))+'</strong></div></div><p class="hint">Hesabın Supabase Auth ilə yaradılıb və mağazan verilənlər bazasına yazılıb. Məhsul və sifariş idarəetməsi növbəti mərhələdə qoşulacaq.</p>';
+    }else if(tab==='products'){
+      c.innerHTML='<h3>Məhsulların</h3><div class="empty">Real məhsul əlavə etmə və şəkil yükləmə növbəti mərhələdə qoşulacaq. Hazırda demo məhsul formu real bazaya yazmır.</div>';
+    }else if(tab==='orders'){
+      c.innerHTML='<h3>Müştəri sifarişləri</h3><div class="empty">Real sifariş siyahısı növbəti mərhələdə qoşulacaq. Sifariş cədvəlləri və təhlükəsiz RPC artıq backend sxemində mövcuddur.</div>';
+    }else{
+      c.innerHTML='<h3>Mağaza ünvanın</h3><div class="store-link">'+esc(data.slug)+'</div><p class="hint" style="margin-top:14px">Mağaza bazada yaradılıb, statusu: <b>'+esc(statusLabel(data.status))+'</b>. İctimai mağaza səhifəsi və paylaşılabilən işlək link növbəti mərhələdə qoşulacaq.</p>';
+    }
+    return;
+  }
+  if(tab==='overview'){
+    c.innerHTML='<h3>Salam, '+esc(data.owner)+'! 👋</h3><div class="stats"><div class="stat"><small>Məhsullar</small><strong>'+data.products.length+'</strong></div><div class="stat"><small>Sifarişlər</small><strong>'+data.orders.length+'</strong></div><div class="stat"><small>Mağaza statusu</small><strong style="font-size:16px">'+(data.approved?'Aktiv':'Təsdiq gözləyir')+'</strong></div></div><p class="hint">Bu demo paneldir; məlumatlar yalnız bu brauzerdə saxlanılır.</p><button class="btn btn-primary" id="addProduct">+ Məhsul əlavə et</button>';
+  }else if(tab==='products'){
+    c.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><h3>Məhsulların</h3><button class="btn btn-primary" id="addProduct">+ Əlavə et</button></div>'+(data.products.length?'<table class="table"><tr><th>Məhsul</th><th>Qiymət</th></tr>'+data.products.map(p=>'<tr><td>'+(p.image?'<img src="'+p.image+'" alt="" style="width:42px;height:42px;object-fit:cover;border-radius:7px;vertical-align:middle;margin-right:8px">':'')+esc(p.name)+'</td><td>'+esc(p.price)+' ₼</td></tr>').join('')+'</table>':'<div class="empty">Hələ məhsul əlavə edilməyib.</div>');
+  }else if(tab==='orders'){
+    c.innerHTML='<h3>Müştəri sifarişləri</h3>'+(data.orders.length?data.orders.map(o=>'<div class="store-link" style="margin:10px 0"><b>'+esc(o.name)+'</b> · '+esc(o.product)+' · '+esc(o.phone)+'</div>').join(''):'<div class="empty">Hələ sifariş yoxdur. Bu yalnız demo sifariş siyahısıdır.</div>');
+  }else{
+    c.innerHTML='<h3>Demo mağaza linki</h3><p class="hint">Bu, yalnız demo vitrindir; ictimai link aktiv deyil.</p><div class="store-link">BAZARIO demo / '+esc(data.slug)+'</div><button class="btn btn-primary" style="margin-top:14px" id="previewStore">Mağaza vitrininə bax</button><p class="hint" style="margin-top:18px">Admin təsdiqi: <b>'+(data.approved?'Təsdiqlənib':'Gözləyir')+'</b></p>';
+  }
+  let add=$('#addProduct');if(add)add.onclick=addProduct;
+  let pv=$('#previewStore');if(pv)pv.onclick=openPublicStore;
+}
+function statusLabel(status){
+  return ({pending:'Admin təsdiqi gözləyir',approved:'Təsdiqlənib',rejected:'Rədd edilib',suspended:'Dayandırılıb'})[status]||'Naməlum';
+}
+let pendingFile=null;
+function addProduct(){
+  pendingImage='';pendingFile=null;$('#productForm').reset();$('#pimagePreview').style.display='none';$('#productModal').classList.add('show');
+}
 $('#closeProduct').onclick=()=>$('#productModal').classList.remove('show');
-$('#pimage').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(f.size>1024*1024){alert('Şəkil 1 MB-dan kiçik olmalıdır.');e.target.value='';return}const rd=new FileReader();rd.onload=()=>{pendingImage=rd.result;$('#pimagePreview').src=pendingImage;$('#pimagePreview').style.display='block'};rd.readAsDataURL(f)});
-$('#productForm').addEventListener('submit',e=>{e.preventDefault();data.products.push({name:$('#pname').value.trim(),price:$('#pprice').value,description:$('#pdesc').value.trim(),image:pendingImage});save();$('#productModal').classList.remove('show');renderTab('products')});
-function openPublicStore(){if(!data)return;$('#publicStoreTitle').textContent=data.shop;const body=$('#publicStoreBody');body.innerHTML='<p class="hint">Demo mağaza vitrini · '+(data.approved?'Aktiv':'Admin təsdiqi gözləyir')+'</p>'+(data.products.length?'<div class="products" style="grid-template-columns:repeat(2,minmax(0,1fr))">'+data.products.map((p,i)=>'<div class="product">'+(p.image?'<img src="'+p.image+'" alt="" style="width:100%;height:115px;object-fit:cover;border-radius:9px">':'<div class="product-art">📦</div>')+'<b>'+esc(p.name)+'</b><small>'+esc(p.price)+' ₼</small><button class="btn btn-primary" style="width:100%;padding:9px;margin-top:9px" data-buy="'+i+'">Sifariş et</button></div>').join('')+'</div>':'<div class="empty">Mağazada hələ məhsul yoxdur.</div>');body.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{const p=data.products[Number(b.dataset.buy)];const name=prompt('Ad və soyad:');if(!name)return;const phone=prompt('Əlaqə nömrəsi:');if(!phone)return;data.orders.push({name,phone,product:p.name,created:new Date().toISOString()});save();alert('Demo sifariş qeydə alındı. Real sifariş sistemi hələ qoşulmayıb.');$('#storeModal').classList.remove('show')});$('#storeModal').classList.add('show')}
+$('#pimage').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  if(f.size>1024*1024){alert('Şəkil 1 MB-dan kiçik olmalıdır.');e.target.value='';return;}
+  pendingFile=f;
+  const rd=new FileReader();rd.onload=()=>{pendingImage=rd.result;$('#pimagePreview').src=pendingImage;$('#pimagePreview').style.display='block';};rd.readAsDataURL(f);
+});
+$('#productForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  if(data.backend){alert('Real məhsul yükləmə növbəti mərhələdə qoşulacaq.');return;}
+  data.products.push({name:$('#pname').value.trim(),price:$('#pprice').value,description:$('#pdesc').value.trim(),image:pendingImage});
+  save();$('#productModal').classList.remove('show');renderTab('products');
+});
+function openPublicStore(){
+  if(!data)return;
+  $('#publicStoreTitle').textContent=data.shop;
+  const body=$('#publicStoreBody');
+  if(data.backend){
+    body.innerHTML='<div class="empty">Mağaza bazada yaradılıb, lakin ictimai mağaza səhifəsi hələ qoşulmayıb.</div>';
+  }else{
+    body.innerHTML='<p class="hint">Demo mağaza vitrini · '+(data.approved?'Aktiv':'Admin təsdiqi gözləyir')+'</p>'+(data.products.length?'<div class="products" style="grid-template-columns:repeat(2,minmax(0,1fr))">'+data.products.map((p,i)=>'<div class="product">'+(p.image?'<img src="'+p.image+'" alt="" style="width:100%;height:115px;object-fit:cover;border-radius:9px">':'<div class="product-art">📦</div>')+'<b>'+esc(p.name)+'</b><small>'+esc(p.price)+' ₼</small><button class="btn btn-primary" style="width:100%;padding:9px;margin-top:9px" data-buy="'+i+'">Sifariş et</button></div>').join('')+'</div>':'<div class="empty">Mağazada hələ məhsul yoxdur.</div>');
+    body.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{
+      const p=data.products[Number(b.dataset.buy)];
+      const name=prompt('Ad və soyad:');if(!name)return;
+      const phone=prompt('Əlaqə nömrəsi:');if(!phone)return;
+      data.orders.push({name,phone,product:p.name,created:new Date().toISOString()});
+      save();alert('Demo sifariş qeydə alındı. Real sifariş sistemi hələ qoşulmayıb.');
+      $('#storeModal').classList.remove('show');
+    });
+  }
+  $('#storeModal').classList.add('show');
+}
 $('#closeStore').onclick=()=>$('#storeModal').classList.remove('show');
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function esc(s){
+  return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+if(!supabaseClient){
+  $('#shopFormNotice').textContent='Demo rejimi: Supabase URL və anon/publishable açarı hələ əlavə edilməyib. Real qeydiyyat işləmir.';
+}
 </script></body></html>
