@@ -59,3 +59,18 @@ After all three migrations have completed, open a new SQL Editor query and run `
 The verification script is not a substitute for a real two-account security test. Before launch, test that one seller cannot read or change another seller's products, orders, or images, and that an unapproved store is not publicly visible.
 
 Supabase Free is not a production uptime guarantee: free projects may pause after one week of inactivity and do not include automatic backups. Check current limits before relying on it for customer orders.
+
+
+## Frontend integration status — 14 November 2026
+
+The draft frontend branch now includes these Supabase-backed flows (they require a configured project and applied migrations before they can run against real data):
+
+- Seller sign-up/sign-in and session restoration.
+- Store creation with the default `pending` approval state.
+- Seller product listing, creation, image upload to `bazario-products`, and deletion.
+- Public read-only storefronts at the same site URL with `?shop=STORE_SLUG`; only approved stores and active products are returned by the database policies.
+- Seller order listing and guarded status changes through `seller_update_order_status`.
+
+Customer checkout is intentionally not enabled yet. The public `create_order` RPC exists in the schema, but before exposing it from a public form, add request throttling/anti-bot protection and test it against an approved store. The admin approval interface is also not implemented yet.
+
+The frontend has passed a JavaScript syntax parse and static element-reference checks in the repository branch. This is not a browser/device integration test: no Supabase project, keys, database migrations, Storage bucket, or real user accounts have been configured. The draft branch has not been merged and no deployment was triggered.
