@@ -115,6 +115,7 @@ async function loadPendingStores(){
   $('#storeList').querySelectorAll('[data-review]').forEach(button=>{
     button.addEventListener('click',()=>reviewStore(button.dataset.id,button.dataset.review));
   });
+  if(busy)document.querySelectorAll('button').forEach(button=>button.disabled=true);
 }
 async function reviewStore(storeId,decision){
   const verb=decision==='approved'?'təsdiqləmək':'rədd etmək';
