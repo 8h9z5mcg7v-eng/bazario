@@ -94,7 +94,7 @@ async function enterAdmin(){
   await loadPendingStores();
 }
 async function loadPendingStores(){
-  if(!client||busy)return;
+  if(!client)return;
   hideNotice($('#panelNotice'));
   $('#storeList').innerHTML='<div class="muted">Müraciətlər yüklənir...</div>';
   const result=await client.from('stores')
