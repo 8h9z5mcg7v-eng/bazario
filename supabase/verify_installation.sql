@@ -1,5 +1,5 @@
 -- BAZARIO backend installation verification
--- Run this only AFTER applying all four migrations in timestamp order.
+-- Run this only AFTER applying all five migrations in timestamp order.
 -- This script is read-only: it checks catalog metadata and does not change data or schema.
 
 do $$
@@ -86,11 +86,14 @@ begin
     raise exception 'BAZARIO: Auth profile-creation trigger is missing.';
   end if;
 
-  -- Public checkout is callable without a customer account; seller status changes are not.
-  if to_regprocedure('public.create_order(text,text,text,jsonb)') is null
-     or not has_function_privilege('anon', 'public.create_order(text,text,text,jsonb)', 'EXECUTE')
-     or not has_function_privilege('authenticated', 'public.create_order(text,text,text,jsonb)', 'EXECUTE') then
-    raise exception 'BAZARIO: public checkout function or its expected grants are missing.';
+  -- Public checkout must pass through the honeypot/throttle wrapper.
+  if to_regprocedure('public.create_order_protected(text,text,text,jsonb,text)') is null
+     or not has_function_privilege('anon', 'public.create_order_protected(text,text,text,jsonb,text)', 'EXECUTE')
+     or not has_function_privilege('authenticated', 'public.create_order_protected(text,text,text,jsonb,text)', 'EXECUTE')
+     or has_function_privilege('anon', 'public.create_order(text,text,text,jsonb)', 'EXECUTE')
+     or has_function_privilege('authenticated', 'public.create_order(text,text,text,jsonb)', 'EXECUTE')
+     or to_regclass('public.orders_store_phone_created_idx') is null then
+    raise exception 'BAZARIO: protected checkout function, rate-limit index, or grants are incorrect.';
   end if;
 
   if to_regprocedure('public.seller_update_order_status(uuid,public.order_status)') is null
@@ -121,6 +124,6 @@ begin
     raise exception 'BAZARIO: an unexpected direct table privilege is present.';
   end if;
 
-  raise notice 'BAZARIO verification passed: 6 tables with RLS, 14 application policies, image bucket and 3 Storage policies, Auth trigger, checkout and seller order-status grants, and guarded administrator approval privileges.';
+  raise notice 'BAZARIO verification passed: 6 tables with RLS, 14 application policies, image bucket and 3 Storage policies, Auth trigger, protected checkout/honeypot grants, seller order-status grants, and guarded administrator approval privileges.';
 end;
 $$;
