@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101b35">
+<title>BAZARIO — Admin paneli</title>
+<style>
+:root{--navy:#101b35;--orange:#ff784f;--bg:#f5f7fb;--ink:#172033;--muted:#667085;--line:#e7eaf0;--green:#16834a;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:var(--navy);color:#fff;padding:18px 0}.wrap{width:min(100% - 32px,980px);margin:auto}.brand{font-size:22px;font-weight:900;letter-spacing:-1px}.brand span{color:var(--orange)}
+main{padding:32px 0 60px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 8px 28px #14213b0b}
+h1{font-size:clamp(25px,4vw,34px);margin:0 0 8px}h2{font-size:21px;margin:0}.muted{color:var(--muted);line-height:1.6}.field{margin:16px 0}.field label{display:block;font-size:13px;font-weight:750;margin-bottom:7px}.field input{width:100%;padding:13px;border:1px solid #d8deea;border-radius:11px;font:inherit}
+button{font:inherit;cursor:pointer;border:0;border-radius:11px;padding:12px 16px;font-weight:750}.primary{background:var(--orange);color:#241c1a}.secondary{background:#eef1f6;color:var(--ink)}.approve{background:#e8f6ee;color:var(--green)}.reject{background:#fff0ef;color:var(--red)}
+button:disabled{opacity:.55;cursor:wait}.wide{width:100%}.hidden{display:none!important}.notice{padding:12px 14px;border-radius:11px;background:#f1f4f9;color:#344054;margin:14px 0;font-size:14px;line-height:1.5}.notice.error{background:#fff0ef;color:#a4231b}.notice.success{background:#eaf7ef;color:#17663c}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}.count{background:#fff0eb;color:#a7472c;padding:7px 11px;border-radius:20px;font-size:13px;font-weight:800}
+.store{border:1px solid var(--line);border-radius:14px;padding:17px;margin-top:13px}.store-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.store h3{margin:0 0 5px;font-size:18px}.slug{font-size:13px;color:#315b91;overflow-wrap:anywhere}.meta{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.actions button{min-width:112px}
+footer{padding:24px 0;color:var(--muted);font-size:13px}a{color:#315b91;text-decoration:none;font-weight:700}
+@media(max-width:560px){.card{padding:18px}.toolbar{align-items:flex-start;flex-direction:column}.store-top{display:block}.store-top .count{display:inline-block;margin-top:10px}.actions button{flex:1}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="brand">BAZAR<span>IO</span> <span style="color:#d6dced;font-size:13px;font-weight:600;letter-spacing:0">/ Admin</span></div></div></header>
+<main class="wrap">
+<section class="card" id="loginCard">
+<h1>Admin girişi</h1>
+<p class="muted">Mağaza müraciətlərini nəzərdən keçirmək üçün administrator hesabınla daxil ol.</p>
+<div id="configNotice" class="notice hidden"></div>
+<form id="loginForm">
+<div class="field"><label for="email">E-poçt</label><input id="email" type="email" autocomplete="username" required placeholder="admin@example.com"></div>
+<div class="field"><label for="password">Şifrə</label><input id="password" type="password" autocomplete="current-password" required></div>
+<button class="primary wide" id="loginButton" type="submit">Daxil ol</button>
+</form>
+<div id="loginNotice" class="notice hidden" role="status"></div>
+</section>
+<section class="hidden" id="adminPanel">
+<div class="toolbar"><div><h1>Mağaza təsdiqləri</h1><p class="muted" style="margin:7px 0 0">Yeni satıcı müraciətlərini təsdiqlə və ya rədd et.</p></div><button class="secondary" id="logoutButton">Çıxış</button></div>
+<div class="card">
+<div class="toolbar"><h2>Gözləyən müraciətlər</h2><span class="count" id="pendingCount">0 müraciət</span></div>
+<div id="storeList"><div class="muted">Yüklənir...</div></div>
+<div id="panelNotice" class="notice hidden" role="status"></div>
+<button class="secondary" id="refreshButton" style="margin-top:16px">Yenilə</button>
+</div>
+</section>
+<footer><a href="./">← BAZARIO ana səhifə</a> · Admin girişi yalnız administrator siyahısında olan hesablar üçün açıqdır.</footer>
+</main>
+<script src="./supabase/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const $=selector=>document.querySelector(selector);
+const config=window.BAZARIO_SUPABASE_CONFIG||{};
+let client=null;
+let busy=false;
+if(window.supabase&&config.url&&config.anonKey){
+  try{client=window.supabase.createClient(config.url,config.anonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});}
+  catch(error){showNotice($('#configNotice'),'Supabase bağlantısı qurulmadı: '+error.message,'error');}
+}else{
+  showNotice($('#configNotice'),'Supabase URL və public anon/publishable açarı hələ konfiqurasiya edilməyib. Bu səhifə real admin hesabı ilə işləyə bilməz.','error');
+}
+function escapeHtml(value){
+  return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+}
+function showNotice(element,message,type){
+  element.textContent=message;
+  element.className='notice'+(type?' '+type:'');
+  element.classList.remove('hidden');
+}
+function hideNotice(element){element.classList.add('hidden');}
+function setBusy(value){
+  busy=value;
+  document.querySelectorAll('button').forEach(button=>button.disabled=value);
+}
+function showLogin(message,type){
+  $('#adminPanel').classList.add('hidden');
+  $('#loginCard').classList.remove('hidden');
+  if(message)showNotice($('#loginNotice'),message,type);
+}
+async function enterAdmin(){
+  if(!client)return;
+  const sessionResult=await client.auth.getSession();
+  if(sessionResult.error)throw sessionResult.error;
+  const user=sessionResult.data.session?.user;
+  if(!user){showLogin();return;}
+  const roleResult=await client.rpc('current_user_is_admin');
+  if(roleResult.error)throw roleResult.error;
+  if(roleResult.data!==true){
+    await client.auth.signOut();
+    showLogin('Bu hesab administrator deyil. Admin siyahısına əlavə olunmuş hesabla daxil ol.','error');
+    return;
+  }
+  $('#loginCard').classList.add('hidden');
+  $('#adminPanel').classList.remove('hidden');
+  hideNotice($('#loginNotice'));
+  await loadPendingStores();
+}
+async function loadPendingStores(){
+  if(!client||busy)return;
+  hideNotice($('#panelNotice'));
+  $('#storeList').innerHTML='<div class="muted">Müraciətlər yüklənir...</div>';
+  const result=await client.from('stores')
+    .select('id,name,slug,description,owner_id,created_at')
+    .eq('status','pending')
+    .order('created_at',{ascending:true});
+  if(result.error)throw result.error;
+  const stores=result.data||[];
+  $('#pendingCount').textContent=stores.length+' müraciət';
+  if(!stores.length){
+    $('#storeList').innerHTML='<div class="notice">Hazırda təsdiq gözləyən mağaza yoxdur.</div>';
+    return;
+  }
+  $('#storeList').innerHTML=stores.map(store=>{
+    const date=store.created_at?new Date(store.created_at).toLocaleString('az-AZ'):'—';
+    return '<article class="store"><div class="store-top"><div><h3>'+escapeHtml(store.name)+'</h3><div class="slug">/'+escapeHtml(store.slug)+'</div></div><span class="count">Təsdiq gözləyir</span></div><p class="muted">'+escapeHtml(store.description||'Mağaza təsviri əlavə edilməyib.')+'</p><div class="meta">Satıcı ID: '+escapeHtml(store.owner_id)+'<br>Tarix: '+escapeHtml(date)+'</div><div class="actions"><button class="approve" data-review="approved" data-id="'+escapeHtml(store.id)+'">Təsdiqlə</button><button class="reject" data-review="rejected" data-id="'+escapeHtml(store.id)+'">Rədd et</button></div></article>';
+  }).join('');
+  $('#storeList').querySelectorAll('[data-review]').forEach(button=>{
+    button.addEventListener('click',()=>reviewStore(button.dataset.id,button.dataset.review));
+  });
+}
+async function reviewStore(storeId,decision){
+  const verb=decision==='approved'?'təsdiqləmək':'rədd etmək';
+  if(!confirm('Bu mağazanı '+verb+' istəyirsən?'))return;
+  setBusy(true);
+  try{
+    const result=await client.rpc('admin_review_store',{p_store_id:storeId,p_decision:decision});
+    if(result.error)throw result.error;
+    showNotice($('#panelNotice'),decision==='approved'?'Mağaza təsdiqləndi. İctimai vitrində görünə bilər.':'Mağaza müraciəti rədd edildi.','success');
+    await loadPendingStores();
+  }catch(error){
+    showNotice($('#panelNotice'),'Əməliyyat alınmadı: '+error.message,'error');
+  }finally{setBusy(false);}
+}
+$('#loginForm').addEventListener('submit',async event=>{
+  event.preventDefault();
+  if(!client){showNotice($('#loginNotice'),'Əvvəlcə Supabase konfiqurasiyasını tamamla.','error');return;}
+  setBusy(true);
+  try{
+    const result=await client.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});
+    if(result.error)throw result.error;
+    await enterAdmin();
+  }catch(error){showLogin('Giriş alınmadı: '+error.message,'error');}
+  finally{setBusy(false);}
+});
+$('#logoutButton').addEventListener('click',async()=>{
+  if(!client)return;
+  setBusy(true);
+  try{
+    const result=await client.auth.signOut();
+    if(result.error)throw result.error;
+    showLogin('Hesabdan çıxış edildi.','success');
+  }catch(error){showNotice($('#panelNotice'),'Çıxış alınmadı: '+error.message,'error');}
+  finally{setBusy(false);}
+});
+$('#refreshButton').addEventListener('click',async()=>{
+  setBusy(true);
+  try{await loadPendingStores();}
+  catch(error){showNotice($('#panelNotice'),'Müraciətləri yükləmək mümkün olmadı: '+error.message,'error');}
+  finally{setBusy(false);}
+});
+if(client){
+  (async()=>{
+    try{await enterAdmin();}
+    catch(error){showLogin('Admin panelini açmaq mümkün olmadı: '+error.message,'error');}
+  })();
+}
+</script>
+</body>
+</html>
