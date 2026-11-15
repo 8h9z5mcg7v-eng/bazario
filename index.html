@@ -20,6 +20,8 @@ section{padding:68px 0}.section-head{text-align:center;max-width:650px;margin:0 
 .public-card h3{font-size:16px;margin:12px 0 5px}
 .public-card p{font-size:13px;color:var(--muted);line-height:1.5;min-height:38px}
 .public-price{font-weight:850;font-size:17px}
+.honeypot{position:absolute!important;left:-10000px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important}
+.checkout-summary{background:#f1f5fb;padding:12px;border-radius:10px;font-weight:750;margin:8px 0 14px}
 @media(max-width:760px){.public-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.public-card img,.public-placeholder{height:130px}}
 @media(max-width:760px){.navlinks a:not(.nav-cta){display:none}.hero{grid-template-columns:1fr;padding:54px 0}.preview{max-width:480px}.features{grid-template-columns:1fr}.cta{display:block}.cta .btn{margin-top:20px}.dash-grid{grid-template-columns:1fr}.side{display:flex;overflow:auto;padding:8px}.side button{white-space:nowrap;width:auto}.stats{grid-template-columns:1fr 1fr}.footer{display:block}.footer span{display:block;margin:6px 0}}
 </style></head>
@@ -32,7 +34,7 @@ section{padding:68px 0}.section-head{text-align:center;max-width:650px;margin:0 
 <section class="dashboard" id="dashboard"><div class="wrap"><div class="dash-top"><div><div class="eyebrow" id="dashMode" style="color:#c45a3a">SATICI PANELİ · DEMO</div><h2 id="dashTitle" style="margin:5px 0">Mağazan</h2></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline" style="display:none;background:#fff;color:#172033;border-color:#dce1ea" id="logoutBtn">Çıxış</button><button class="btn btn-outline" style="background:#fff;color:#172033;border-color:#dce1ea" id="backBtn">← Ana səhifə</button></div></div><div class="dash-grid"><aside class="side"><button class="active" data-tab="overview">İcmal</button><button data-tab="products">Məhsullar</button><button data-tab="orders">Sifarişlər</button><button data-tab="store">Mağaza linki</button></aside><div class="panel" id="dashContent"></div></div></div></section>
 <section id="publicPage" class="public-page"><div class="wrap"><a href="./" style="display:inline-block;margin:25px 0;color:#34415a;text-decoration:none;font-weight:750">← BAZARIO ana səhifə</a><div id="publicPageContent"><div class="empty">Mağaza yüklənir...</div></div></div></section>
 <div class="footer wrap"><span>© 2026 BAZARIO. Bütün hüquqlar qorunur.</span><span>Azərbaycan dilində onlayn mağaza platforması · <a href="./admin.html">Admin girişi</a></span></div>
-<div class="modal-backdrop" id="productModal"><div class="modal"><div class="modal-head"><h2>Məhsul əlavə et</h2><button class="close" id="closeProduct">×</button></div><form id="productForm"><div class="field"><label for="pname">Məhsulun adı</label><input id="pname" required placeholder="Məsələn, Dəri çanta"></div><div class="field"><label for="pprice">Qiymət (AZN)</label><input id="pprice" type="number" min="0.01" step="0.01" required placeholder="35"></div><div class="field"><label for="pdesc">Təsvir</label><textarea id="pdesc" rows="3" placeholder="Məhsul haqqında qısa məlumat"></textarea></div><div class="field"><label for="pimage">Məhsul şəkli</label><input id="pimage" type="file" accept="image/jpeg,image/png,image/webp"><div class="hint">JPEG, PNG və ya WebP · maksimum 1 MB.</div><img id="pimagePreview" alt="" style="display:none;width:100%;max-height:170px;object-fit:contain;margin-top:10px;border-radius:10px;background:#f4f5f7"></div><button class="btn btn-primary wide" type="submit">Məhsulu yadda saxla</button></form></div></div><div class="modal-backdrop" id="storeModal"><div class="modal"><div class="modal-head"><h2 id="publicStoreTitle">Mağaza vitrini</h2><button class="close" id="closeStore">×</button></div><div id="publicStoreBody"></div></div></div><div class="modal-backdrop" id="modal"><div class="modal"><div class="modal-head"><h2 id="modalTitle">Mağazanı yarat</h2><button class="close" id="closeModal">×</button></div><form id="shopForm"><div id="storeFields"><div class="field"><label for="owner">Adın</label><input id="owner" required placeholder="Məsələn, Aysel"></div><div class="field"><label for="shop">Mağazanın adı</label><input id="shop" required placeholder="Məsələn, Mirvari Store"></div><div class="field"><label for="slug">Mağaza ünvanı</label><input id="slug" required placeholder="mirvari-store"><div class="hint">Mağaza ünvanı yalnız latın hərfləri, rəqəmlər və tire ilə yaradılır.</div></div></div><div id="accountFields"><div class="field" id="emailField"><label for="email">E-poçt</label><input id="email" type="email" placeholder="ad@example.com"></div><div class="field" id="passwordField"><label for="password">Şifrə</label><input id="password" type="password" minlength="8" autocomplete="new-password" placeholder="Ən azı 8 simvol"></div></div><p class="hint" id="shopFormNotice">Demo rejimində məlumatlar yalnız bu brauzerdə saxlanılır.</p><button class="btn btn-primary wide" id="shopSubmit" type="submit">Demo mağazanı yarat</button></form></div></div><div class="modal-backdrop" id="authModal"><div class="modal"><div class="modal-head"><h2>Satıcı girişi</h2><button class="close" id="closeAuth">×</button></div><form id="authForm"><div class="field"><label for="loginEmail">E-poçt</label><input id="loginEmail" type="email" autocomplete="username" required placeholder="ad@example.com"></div><div class="field"><label for="loginPassword">Şifrə</label><input id="loginPassword" type="password" autocomplete="current-password" required></div><p class="hint" id="authNotice">Supabase bağlantısı qurulduqdan sonra real hesabla giriş edə bilərsən.</p><button class="btn btn-primary wide" type="submit">Giriş et</button><button class="btn btn-light wide" style="margin-top:8px" id="authSignupBtn" type="button">Hesab yarat</button></form></div></div>
+<div class="modal-backdrop" id="productModal"><div class="modal"><div class="modal-head"><h2>Məhsul əlavə et</h2><button class="close" id="closeProduct">×</button></div><form id="productForm"><div class="field"><label for="pname">Məhsulun adı</label><input id="pname" required placeholder="Məsələn, Dəri çanta"></div><div class="field"><label for="pprice">Qiymət (AZN)</label><input id="pprice" type="number" min="0.01" step="0.01" required placeholder="35"></div><div class="field"><label for="pdesc">Təsvir</label><textarea id="pdesc" rows="3" placeholder="Məhsul haqqında qısa məlumat"></textarea></div><div class="field"><label for="pimage">Məhsul şəkli</label><input id="pimage" type="file" accept="image/jpeg,image/png,image/webp"><div class="hint">JPEG, PNG və ya WebP · maksimum 1 MB.</div><img id="pimagePreview" alt="" style="display:none;width:100%;max-height:170px;object-fit:contain;margin-top:10px;border-radius:10px;background:#f4f5f7"></div><button class="btn btn-primary wide" type="submit">Məhsulu yadda saxla</button></form></div></div><div class="modal-backdrop" id="storeModal"><div class="modal"><div class="modal-head"><h2 id="publicStoreTitle">Mağaza vitrini</h2><button class="close" id="closeStore">×</button></div><div id="publicStoreBody"></div></div></div><div class="modal-backdrop" id="checkoutModal"><div class="modal"><div class="modal-head"><h2>Sifariş et</h2><button class="close" id="closeCheckout" type="button">×</button></div><div class="checkout-summary" id="checkoutProductTitle"></div><form id="checkoutForm"><div class="field"><label for="checkoutName">Ad və soyad</label><input id="checkoutName" required maxlength="100" autocomplete="name" placeholder="Ad və soyad"></div><div class="field"><label for="checkoutPhone">Əlaqə nömrəsi</label><input id="checkoutPhone" type="tel" required minlength="7" maxlength="30" autocomplete="tel" placeholder="+994..."></div><div class="field"><label for="checkoutQuantity">Miqdar</label><input id="checkoutQuantity" type="number" min="1" max="99" value="1" required></div><div class="honeypot" aria-hidden="true"><label for="checkoutWebsite">Vebsayt</label><input id="checkoutWebsite" name="website" type="text" tabindex="-1" autocomplete="off"></div><p class="hint">Sifariş göndərildikdən sonra satıcı əlaqə nömrənlə səninlə əlaqə saxlayacaq.</p><div id="checkoutNotice" class="hint" role="status"></div><button class="btn btn-primary wide" type="submit">Sifarişi göndər</button></form></div></div><div class="modal-backdrop" id="modal"><div class="modal"><div class="modal-head"><h2 id="modalTitle">Mağazanı yarat</h2><button class="close" id="closeModal">×</button></div><form id="shopForm"><div id="storeFields"><div class="field"><label for="owner">Adın</label><input id="owner" required placeholder="Məsələn, Aysel"></div><div class="field"><label for="shop">Mağazanın adı</label><input id="shop" required placeholder="Məsələn, Mirvari Store"></div><div class="field"><label for="slug">Mağaza ünvanı</label><input id="slug" required placeholder="mirvari-store"><div class="hint">Mağaza ünvanı yalnız latın hərfləri, rəqəmlər və tire ilə yaradılır.</div></div></div><div id="accountFields"><div class="field" id="emailField"><label for="email">E-poçt</label><input id="email" type="email" placeholder="ad@example.com"></div><div class="field" id="passwordField"><label for="password">Şifrə</label><input id="password" type="password" minlength="8" autocomplete="new-password" placeholder="Ən azı 8 simvol"></div></div><p class="hint" id="shopFormNotice">Demo rejimində məlumatlar yalnız bu brauzerdə saxlanılır.</p><button class="btn btn-primary wide" id="shopSubmit" type="submit">Demo mağazanı yarat</button></form></div></div><div class="modal-backdrop" id="authModal"><div class="modal"><div class="modal-head"><h2>Satıcı girişi</h2><button class="close" id="closeAuth">×</button></div><form id="authForm"><div class="field"><label for="loginEmail">E-poçt</label><input id="loginEmail" type="email" autocomplete="username" required placeholder="ad@example.com"></div><div class="field"><label for="loginPassword">Şifrə</label><input id="loginPassword" type="password" autocomplete="current-password" required></div><p class="hint" id="authNotice">Supabase bağlantısı qurulduqdan sonra real hesabla giriş edə bilərsən.</p><button class="btn btn-primary wide" type="submit">Giriş et</button><button class="btn btn-light wide" style="margin-top:8px" id="authSignupBtn" type="button">Hesab yarat</button></form></div></div>
 <script src="./supabase/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const $=s=>document.querySelector(s);
@@ -48,6 +50,8 @@ if(window.supabase&&config.url&&config.anonKey){
 }
 let data=JSON.parse(localStorage.getItem('bazario_demo')||'null');
 let currentUser=null;
+let publicStoreSlug='';
+let checkoutProductId='';
 let activeTab='overview';
 let formMode='demo';
 let pendingImage='';
@@ -429,6 +433,40 @@ $('#closeStore').onclick=()=>$('#storeModal').classList.remove('show');
 function esc(s){
   return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+function openCheckout(productId,productName){
+  if(!supabaseClient||!publicStoreSlug){alert('Sifariş sistemi hazır deyil.');return;}
+  checkoutProductId=productId;
+  $('#checkoutForm').reset();
+  $('#checkoutQuantity').value='1';
+  $('#checkoutProductTitle').textContent=productName;
+  $('#checkoutNotice').textContent='';
+  $('#checkoutModal').classList.add('show');
+}
+function closeCheckout(){$('#checkoutModal').classList.remove('show');}
+$('#closeCheckout').onclick=closeCheckout;
+$('#checkoutModal').addEventListener('click',event=>{if(event.target===$('#checkoutModal'))closeCheckout();});
+$('#checkoutForm').addEventListener('submit',async event=>{
+  event.preventDefault();
+  const button=event.target.querySelector('button[type="submit"]');
+  const quantity=Number($('#checkoutQuantity').value);
+  if(!Number.isInteger(quantity)||quantity<1||quantity>99){alert('Miqdar 1–99 arasında olmalıdır.');return;}
+  button.disabled=true;
+  try{
+    const result=await supabaseClient.rpc('create_order_protected',{
+      p_store_slug:publicStoreSlug,
+      p_buyer_name:$('#checkoutName').value.trim(),
+      p_buyer_phone:$('#checkoutPhone').value.trim(),
+      p_items:[{product_id:checkoutProductId,quantity}],
+      p_honeypot:$('#checkoutWebsite').value
+    });
+    if(result.error)throw result.error;
+    closeCheckout();
+    $('#checkoutForm').reset();
+    alert('Sifarişin qəbul edildi. Satıcı səninlə əlaqə saxlayacaq.');
+  }catch(error){
+    $('#checkoutNotice').textContent='Sifarişi göndərmək mümkün olmadı: '+error.message;
+  }finally{button.disabled=false;}
+});
 async function renderPublicStorePage(slug){
   $('#landing').style.display='none';
   $('#dashboard').classList.remove('show');
@@ -445,14 +483,16 @@ async function renderPublicStorePage(slug){
     return;
   }
   const store=storeResult.data;
+  publicStoreSlug=store.slug;
   const productsResult=await supabaseClient.from('products').select('id,name,description,price,image_path').eq('store_id',store.id).eq('is_active',true).order('created_at',{ascending:false});
   if(productsResult.error)throw productsResult.error;
   const products=productsResult.data||[];
   const cards=products.length?'<div class="public-grid">'+products.map(product=>{
     const image=product.image_path?supabaseClient.storage.from('bazario-products').getPublicUrl(product.image_path).data.publicUrl:'';
-    return '<article class="public-card">'+(image?'<img src="'+esc(image)+'" alt="'+esc(product.name)+'">':'<div class="public-placeholder">📦</div>')+'<h3>'+esc(product.name)+'</h3><p>'+esc(product.description||'')+'</p><div class="public-price">'+Number(product.price).toFixed(2)+' ₼</div></article>';
+    return '<article class="public-card">'+(image?'<img src="'+esc(image)+'" alt="'+esc(product.name)+'">':'<div class="public-placeholder">📦</div>')+'<h3>'+esc(product.name)+'</h3><p>'+esc(product.description||'')+'</p><div class="public-price">'+Number(product.price).toFixed(2)+' ₼</div><button class="btn btn-primary wide" style="margin-top:12px" data-order-product="'+esc(product.id)+'" data-product-name="'+esc(product.name)+'">Sifariş et</button></article>';
   }).join('')+'</div>':'<div class="empty">Bu mağazada hələ aktiv məhsul yoxdur.</div>';
-  target.innerHTML='<div class="public-head"><div class="eyebrow">BAZARIO MAĞAZASI</div><h1 style="font-size:clamp(30px,5vw,44px);margin:10px 0">'+esc(store.name)+'</h1><p>'+esc(store.description||'Məhsullarımıza nəzər salın.')+'</p></div><h2 style="margin:0 0 18px">Məhsullar</h2>'+cards+'<p class="hint" style="margin:24px 0">Sifariş qəbulu tezliklə aktivləşdiriləcək.</p>';
+  target.innerHTML='<div class="public-head"><div class="eyebrow">BAZARIO MAĞAZASI</div><h1 style="font-size:clamp(30px,5vw,44px);margin:10px 0">'+esc(store.name)+'</h1><p>'+esc(store.description||'Məhsullarımıza nəzər salın.')+'</p></div><h2 style="margin:0 0 18px">Məhsullar</h2>'+cards+'<p class="hint" style="margin:24px 0">Sifarişlər satıcı panelinə göndərilir. Bir telefon nömrəsindən saatda maksimum 3 sifariş qəbul edilir.</p>';
+  target.querySelectorAll('[data-order-product]').forEach(button=>button.addEventListener('click',()=>openCheckout(button.dataset.orderProduct,button.dataset.productName)));
 }
 if(!supabaseClient){
   $('#shopFormNotice').textContent='Demo rejimi: Supabase URL və anon/publishable açarı hələ əlavə edilməyib. Real qeydiyyat işləmir.';
