@@ -10,12 +10,14 @@ This folder contains the first PostgreSQL/Supabase schema migration for BAZARIO.
 - Customer orders and immutable product-name/price snapshots.
 - Row Level Security policies separating public storefront data, each seller's data, and administrators.
 - A public checkout function that validates products and calculates prices on the server.
-- A guarded seller order-status RPC: sellers can confirm, prepare, ship, complete, or cancel orders only through valid state transitions; administrators can override statuses.
+- A guarded seller order-status RPC: sellers can confirm, prepare, ship, complete, or cancel orders only through valid state transitions.
+- A private administrator allow-list, a caller-only admin-role check, and a database-enforced approve/reject RPC for pending stores.
+- A mobile-friendly `admin.html` page for reviewing pending store applications.
 
 ## Important boundaries
 - This is a schema file only. It does not create a Supabase project, configure email delivery, create a Storage bucket, connect the website, or deploy a backend.
-- The current BAZARIO website is still a browser-only demo using localStorage. Real sign-in, image upload, public shop routes, and server-backed orders are not connected yet.
-- Admin membership must be added from trusted SQL/service-role access after that person has signed up. Never expose a service-role key in the browser.
+- The `main` branch remains the published browser-only demo. The open draft PR contains Supabase Auth, seller product/image management, public approved-store pages, seller order management, and the admin approval page. These features require the Supabase project, keys, and migrations before they can run against live data.
+- Admin membership must be added manually from the Supabase SQL Editor after the administrator has registered. Never expose a service-role key in the browser.
 - The migration is intended for a new, empty Supabase project. Do not run it twice on the same database.
 - Before a public launch, add request throttling/anti-bot protection, email verification settings, and a backup/export routine.
 - No paid service, domain, account, or production deployment is created by this work.
@@ -31,37 +33,46 @@ Official references:
 
 ## Supabase Auth frontend connection
 
-The website now contains an optional email/password Auth flow and seller-store creation flow. It remains in demo mode until a Supabase project has been created, all three migrations have been applied, and the public browser settings below are filled in.
+The draft frontend contains email/password Auth, seller-store creation, product/image management, public approved-store pages, seller order management, and the admin approval page. It remains in demo mode until a Supabase project has been created, all four migrations have been applied, and the public browser settings below are filled in.
 
 1. In the Supabase dashboard, open the project's API settings and copy the **Project URL** and the public **anon/publishable key**.
 2. Open `supabase/config.js` in GitHub and enter those two values in `url` and `anonKey`.
 3. Save the file. The browser uses the Supabase JavaScript v2 library from jsDelivr.
 4. Open the site after the frontend change has been reviewed and deployed. Select **Mağaza yarat**, register with email/password, confirm the email if required, and sign in.
-5. The first store is created with status `pending`; the admin approval process is not yet connected to the website.
+5. The first store is created with status `pending`. After an admin account has registered, add that account to the private allow-list as described below.
 
 The anon/publishable key is designed to be used in browser code; database access must remain protected by the included RLS policies. **Never paste a service_role/secret key into `config.js`, HTML, or any public repository.** Do not share a password or key in ChatGPT.
 
-The Auth flow and store creation have only been statically checked. They have not been tested against a live Supabase project because no project exists yet. Product CRUD, image uploads, public storefront routes, customer checkout, seller order management, and admin approval UI remain future integration work.
+The frontend flows have only been statically checked. They have not been tested against a live Supabase project because no project exists yet. Customer checkout is intentionally not exposed yet: the database RPC exists, but public request throttling/anti-bot protection and real security tests are still required.
 
 ## Applying it later from an iPhone
 1. Open the Supabase dashboard in Safari and create/select a project only after explicitly deciding to use Supabase Free.
 2. Open **SQL Editor** and create a new query.
-3. Run the three migration files in timestamp order, each in a separate SQL Editor query: `20261109000000_initial_schema.sql`, `20261110000000_product_image_storage.sql`, then `20261111000000_seller_order_status_workflow.sql`.
+3. Run the four migration files in timestamp order, each in a separate SQL Editor query: `20261109000000_initial_schema.sql`, `20261110000000_product_image_storage.sql`, `20261111000000_seller_order_status_workflow.sql`, then `20261115000000_admin_approval_api.sql`.
 4. Review each SQL file before running it. These migrations have not been applied to a live database yet.
-5. Product image paths must use the store UUID as the first folder, for example `STORE_UUID/PRODUCT_UUID.webp`.
-6. The image bucket is public for storefront display, so anyone who obtains an image URL can view that image. Do not upload private documents or personal photos.
-7. Sellers change order status only through `seller_update_order_status` RPC; direct table updates are revoked.
-8. Keep all secret/service-role keys out of the BAZARIO website and GitHub.
+5. Register the administrator account through the BAZARIO sign-up flow. In SQL Editor, replace the example email below with that account's exact email and run this statement once:
+
+   ```sql
+   insert into public.admin_users (user_id)
+   select id from auth.users where lower(email) = lower('admin@example.com')
+   on conflict (user_id) do nothing;
+   ```
+
+6. Open `admin.html` on the same site and sign in with that administrator account. Only accounts in `admin_users` can review stores; the database RPC and RLS policies enforce this independently of the page.
+7. Product image paths must use the store UUID as the first folder, for example `STORE_UUID/PRODUCT_UUID.webp`.
+8. The image bucket is public for storefront display, so anyone who obtains an image URL can view that image. Do not upload private documents or personal photos.
+9. Sellers change order status only through `seller_update_order_status` RPC; direct table updates are revoked.
+10. Keep all secret/service-role keys out of the BAZARIO website and GitHub.
 
 ## Verify the installation
-After all three migrations have completed, open a new SQL Editor query and run `verify_installation.sql`. It is a read-only check for the six tables, RLS policies, image bucket, Auth trigger, and function/table privileges. A successful run ends with a `BAZARIO verification passed` notice. It does not create or modify anything.
+After all four migrations have completed, open a new SQL Editor query and run `verify_installation.sql`. It is a read-only check for the six tables, RLS policies, image bucket, Auth trigger, checkout, seller order-status, and administrator approval function privileges. A successful run ends with a `BAZARIO verification passed` notice. It does not create or modify anything.
 
 The verification script is not a substitute for a real two-account security test. Before launch, test that one seller cannot read or change another seller's products, orders, or images, and that an unapproved store is not publicly visible.
 
 Supabase Free is not a production uptime guarantee: free projects may pause after one week of inactivity and do not include automatic backups. Check current limits before relying on it for customer orders.
 
 
-## Frontend integration status — 14 November 2026
+## Frontend integration status — 15 November 2026
 
 The draft frontend branch now includes these Supabase-backed flows (they require a configured project and applied migrations before they can run against real data):
 
@@ -70,7 +81,8 @@ The draft frontend branch now includes these Supabase-backed flows (they require
 - Seller product listing, creation, image upload to `bazario-products`, and deletion.
 - Public read-only storefronts at the same site URL with `?shop=STORE_SLUG`; only approved stores and active products are returned by the database policies.
 - Seller order listing and guarded status changes through `seller_update_order_status`.
+- A separate responsive `admin.html` page that checks the current user's admin role and approves or rejects pending stores through `admin_review_store`.
 
-Customer checkout is intentionally not enabled yet. The public `create_order` RPC exists in the schema, but before exposing it from a public form, add request throttling/anti-bot protection and test it against an approved store. The admin approval interface is also not implemented yet.
+Customer checkout is intentionally not enabled yet. The public `create_order` RPC exists in the schema, but before exposing it from a public form, add request throttling/anti-bot protection and test it against an approved store.
 
 The frontend has passed a JavaScript syntax parse and static element-reference checks in the repository branch. This is not a browser/device integration test: no Supabase project, keys, database migrations, Storage bucket, or real user accounts have been configured. The draft branch has not been merged and no deployment was triggered.
