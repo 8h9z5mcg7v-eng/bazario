@@ -38,6 +38,7 @@ begin
   end if;
 
   if p_store_id is null
+     or p_decision is null
      or p_decision not in (
        'approved'::public.store_status,
        'rejected'::public.store_status
@@ -77,6 +78,11 @@ $$;
 
 revoke all on function public.admin_review_store(uuid, public.store_status) from public, anon;
 grant execute on function public.admin_review_store(uuid, public.store_status) to authenticated;
+
+-- Authenticated users may edit only public-facing store details directly.
+-- Approval state and timestamps can be changed only through the guarded RPC.
+revoke update on public.stores from authenticated;
+grant update (name, slug, description) on public.stores to authenticated;
 
 comment on function public.current_user_is_admin() is
   'Returns whether the currently authenticated user is in the private administrator allow-list.';
