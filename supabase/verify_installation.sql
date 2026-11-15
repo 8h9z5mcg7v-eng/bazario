@@ -1,5 +1,5 @@
 -- BAZARIO backend installation verification
--- Run this only AFTER applying all three migrations in timestamp order.
+-- Run this only AFTER applying all four migrations in timestamp order.
 -- This script is read-only: it checks catalog metadata and does not change data or schema.
 
 do $$
@@ -99,6 +99,19 @@ begin
     raise exception 'BAZARIO: seller order-status function grants are incorrect.';
   end if;
 
+  -- Administrator UI may call only the safe role-check and review functions.
+  if to_regprocedure('public.current_user_is_admin()') is null
+     or not has_function_privilege('authenticated', 'public.current_user_is_admin()', 'EXECUTE')
+     or has_function_privilege('anon', 'public.current_user_is_admin()', 'EXECUTE') then
+    raise exception 'BAZARIO: administrator role-check function grants are incorrect.';
+  end if;
+
+  if to_regprocedure('public.admin_review_store(uuid,public.store_status)') is null
+     or not has_function_privilege('authenticated', 'public.admin_review_store(uuid,public.store_status)', 'EXECUTE')
+     or has_function_privilege('anon', 'public.admin_review_store(uuid,public.store_status)', 'EXECUTE') then
+    raise exception 'BAZARIO: administrator store-review function grants are incorrect.';
+  end if;
+
   -- Prevent direct edits to order records and direct reading of the admin allow-list.
   if has_table_privilege('authenticated', 'public.orders', 'UPDATE')
      or has_table_privilege('authenticated', 'public.admin_users', 'SELECT')
@@ -106,6 +119,6 @@ begin
     raise exception 'BAZARIO: an unexpected direct table privilege is present.';
   end if;
 
-  raise notice 'BAZARIO verification passed: 6 tables with RLS, 14 application policies, image bucket and 3 Storage policies, Auth trigger, checkout grants, and guarded order-status grants.';
+  raise notice 'BAZARIO verification passed: 6 tables with RLS, 14 application policies, image bucket and 3 Storage policies, Auth trigger, checkout, seller order-status and administrator review grants.';
 end;
 $$;
