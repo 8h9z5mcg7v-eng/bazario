@@ -114,11 +114,13 @@ begin
 
   -- Prevent direct edits to order records and direct reading of the admin allow-list.
   if has_table_privilege('authenticated', 'public.orders', 'UPDATE')
+     or has_column_privilege('authenticated', 'public.stores', 'status', 'UPDATE')
+     or has_column_privilege('authenticated', 'public.stores', 'approved_at', 'UPDATE')
      or has_table_privilege('authenticated', 'public.admin_users', 'SELECT')
      or has_table_privilege('anon', 'public.admin_users', 'SELECT') then
     raise exception 'BAZARIO: an unexpected direct table privilege is present.';
   end if;
 
-  raise notice 'BAZARIO verification passed: 6 tables with RLS, 14 application policies, image bucket and 3 Storage policies, Auth trigger, checkout, seller order-status and administrator review grants.';
+  raise notice 'BAZARIO verification passed: 6 tables with RLS, 14 application policies, image bucket and 3 Storage policies, Auth trigger, checkout and seller order-status grants, and guarded administrator approval privileges.';
 end;
 $$;
