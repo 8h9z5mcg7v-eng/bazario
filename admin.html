@@ -124,8 +124,8 @@ async function reviewStore(storeId,decision){
   try{
     const result=await client.rpc('admin_review_store',{p_store_id:storeId,p_decision:decision});
     if(result.error)throw result.error;
-    showNotice($('#panelNotice'),decision==='approved'?'Mağaza təsdiqləndi. İctimai vitrində görünə bilər.':'Mağaza müraciəti rədd edildi.','success');
     await loadPendingStores();
+    showNotice($('#panelNotice'),decision==='approved'?'Mağaza təsdiqləndi. İctimai vitrində görünə bilər.':'Mağaza müraciəti rədd edildi.','success');
   }catch(error){
     showNotice($('#panelNotice'),'Əməliyyat alınmadı: '+error.message,'error');
   }finally{setBusy(false);}
