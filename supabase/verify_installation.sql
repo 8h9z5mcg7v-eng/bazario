@@ -96,6 +96,19 @@ begin
     raise exception 'BAZARIO: protected checkout function, rate-limit index, or grants are incorrect.';
   end if;
 
+  -- Phone formatting must be normalized before the per-store rate-limit lookup.
+  if not exists (
+    select 1
+    from pg_catalog.pg_proc p
+    join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname = 'create_order_protected'
+      and p.prosecdef
+      and p.prosrc like '%regexp_replace(p_buyer_phone%'
+  ) then
+    raise exception 'BAZARIO: checkout phone normalization or SECURITY DEFINER wrapper is missing.';
+  end if;
+
   if to_regprocedure('public.seller_update_order_status(uuid,public.order_status)') is null
      or not has_function_privilege('authenticated', 'public.seller_update_order_status(uuid,public.order_status)', 'EXECUTE')
      or has_function_privilege('anon', 'public.seller_update_order_status(uuid,public.order_status)', 'EXECUTE') then
@@ -124,6 +137,6 @@ begin
     raise exception 'BAZARIO: an unexpected direct table privilege is present.';
   end if;
 
-  raise notice 'BAZARIO verification passed: 6 tables with RLS, 14 application policies, image bucket and 3 Storage policies, Auth trigger, protected checkout/honeypot grants, seller order-status grants, and guarded administrator approval privileges.';
+  raise notice 'BAZARIO verification passed: 6 tables with RLS, 14 application policies, image bucket and 3 Storage policies, Auth trigger, protected checkout/honeypot/phone-normalization grants, seller order-status grants, and guarded administrator approval privileges.';
 end;
 $$;
