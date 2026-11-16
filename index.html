@@ -264,16 +264,17 @@ function renderTab(tab){
     if(tab==='overview'){
       c.innerHTML='<h3>Salam, '+esc(data.owner)+'! 👋</h3><div class="stats"><div class="stat"><small>Məhsullar</small><strong>'+data.products.length+'</strong></div><div class="stat"><small>Sifarişlər</small><strong>'+data.orders.length+'</strong></div><div class="stat"><small>Mağaza statusu</small><strong style="font-size:16px">'+esc(statusLabel(data.status))+'</strong></div></div>'+(data.status==='pending'?'<p class="hint">Mağazan admin təsdiqini gözləyir. Məhsullarını indidən əlavə edə bilərsən; təsdiqdən sonra ictimai vitrində görünəcəklər.</p>':'<p class="hint">Məhsulların, sifarişlərin və mağaza linkin Supabase bazasından yüklənir.</p>');
     }else if(tab==='products'){
-      const rows=data.products.length?'<table class="table"><tr><th>Məhsul</th><th>Qiymət</th><th></th></tr>'+data.products.map(p=>'<tr><td>'+(p.image_url?'<img src="'+esc(p.image_url)+'" alt="" style="width:42px;height:42px;object-fit:cover;border-radius:7px;vertical-align:middle;margin-right:8px">':'')+esc(p.name)+'<div class="hint">'+esc(p.description||'')+'</div></td><td>'+Number(p.price).toFixed(2)+' ₼</td><td><button class="btn btn-outline" style="background:#fff;color:#a33;border:1px solid #eed" data-delete-product="'+esc(p.id)+'">Sil</button></td></tr>').join('')+'</table>':'<div class="empty">Hələ məhsul əlavə edilməyib.</div>';
+      const rows=data.products.length?'<table class="table"><tr><th>Məhsul</th><th>Qiymət</th><th>Status / əməliyyat</th></tr>'+data.products.map(p=>'<tr><td>'+(p.image_url?'<img src="'+esc(p.image_url)+'" alt="" style="width:42px;height:42px;object-fit:cover;border-radius:7px;vertical-align:middle;margin-right:8px">':'')+esc(p.name)+'<div class="hint">'+esc(p.description||'')+'</div></td><td>'+Number(p.price).toFixed(2)+' ₼</td><td><div class="hint">'+(p.is_active?'İctimai vitrində aktiv':'Gizlədilib')+'</div><button class="btn btn-outline" style="margin:5px 5px 0 0;background:#fff" data-toggle-product="'+esc(p.id)+'" data-active="'+String(!!p.is_active)+'">'+(p.is_active?'Gizlət':'Yayımla')+'</button><button class="btn btn-outline" style="margin-top:5px;background:#fff;color:#a33;border:1px solid #eed" data-delete-product="'+esc(p.id)+'">Sil</button></td></tr>').join('')+'</table>':'<div class="empty">Hələ məhsul əlavə edilməyib.</div>';
       c.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Məhsulların</h3><button class="btn btn-primary" id="addProduct">+ Əlavə et</button></div>'+rows;
       const addButton=$('#addProduct');if(addButton)addButton.onclick=addProduct;
+      c.querySelectorAll('[data-toggle-product]').forEach(button=>button.addEventListener('click',()=>toggleBackendProduct(button.dataset.toggleProduct,button.dataset.active==='true')));
       c.querySelectorAll('[data-delete-product]').forEach(button=>button.addEventListener('click',()=>deleteBackendProduct(button.dataset.deleteProduct)));
     }else if(tab==='orders'){
       const cards=data.orders.length?data.orders.map(o=>{
         const items=(o.items||[]).map(i=>esc(i.product_name)+' × '+i.quantity).join(', ');
         const actions=orderNextStatuses(o.status).map(next=>'<button class="btn btn-primary" style="padding:8px 11px;margin:8px 6px 0 0" data-order-id="'+esc(o.id)+'" data-next-status="'+next+'">'+esc(orderStatusLabel(next))+'</button>').join('');
         return '<div class="store-link" style="margin:10px 0;background:#fff;border:1px solid var(--line)"><b>'+esc(o.buyer_name)+'</b> · '+esc(o.buyer_phone)+'<div class="hint" style="margin:6px 0">'+items+'</div><div>Yekun: <b>'+Number(o.total_amount).toFixed(2)+' ₼</b> · '+esc(orderStatusLabel(o.status))+'</div><div class="hint">'+new Date(o.created_at).toLocaleString('az-AZ')+'</div>'+actions+'</div>';
-      }).join(''):'<div class="empty">Hələ sifariş yoxdur. Müştəri sifariş forması növbəti mərhələdə ictimai mağazaya qoşulacaq.</div>';
+      }).join(''):'<div class="empty">Hələ sifariş yoxdur. Müştərilər təsdiqlənmiş mağaza vitrininə daxil olaraq məhsul səhifəsindən sifariş verə bilərlər.</div>';
       c.innerHTML='<h3>Müştəri sifarişləri</h3>'+cards;
       c.querySelectorAll('[data-order-id]').forEach(button=>button.addEventListener('click',()=>updateBackendOrderStatus(button.dataset.orderId,button.dataset.nextStatus)));
     }else{
@@ -338,17 +339,38 @@ async function refreshBackendData(){
   }
   data.orders=orders.map(order=>({...order,items:items.filter(item=>item.order_id===order.id)}));
 }
+async function toggleBackendProduct(productId,isActive){
+  const action=isActive?'gizlətmək':'yenidən yayımlamaq';
+  if(!confirm('Bu məhsulu '+action+' istəyirsən?'))return;
+  try{
+    const result=await supabaseClient.from('products')
+      .update({is_active:!isActive})
+      .eq('id',productId).eq('store_id',data.storeId)
+      .select('id').maybeSingle();
+    if(result.error)throw result.error;
+    if(!result.data)throw new Error('Məhsul tapılmadı və ya bu əməliyyata icazən yoxdur.');
+    await refreshBackendData();renderTab('products');
+  }catch(error){alert('Məhsulun statusunu dəyişmək mümkün olmadı: '+error.message);}
+}
 async function deleteBackendProduct(productId){
   const product=data.products.find(item=>item.id===productId);
-  if(!product||!confirm('Bu məhsulu silmək istəyirsən?'))return;
+  if(!product||!confirm('Bu məhsulu silmək istəyirsən? Sifariş tarixçəsində istifadə olunubsa, silinməyə bilər.'))return;
   try{
+    // Delete the database row first. If an old order references this product,
+    // the foreign-key restriction rejects deletion and the image stays intact.
+    const result=await supabaseClient.from('products').delete()
+      .eq('id',productId).eq('store_id',data.storeId)
+      .select('id').maybeSingle();
+    if(result.error){
+      if(result.error.code==='23503')throw new Error('Bu məhsul əvvəlki sifarişdə istifadə edilib. Sifariş tarixçəsini qorumaq üçün onu silmək olmur; “Gizlət” düyməsindən istifadə et.');
+      throw result.error;
+    }
+    if(!result.data)throw new Error('Məhsul tapılmadı və ya silmək icazən yoxdur.');
+    await refreshBackendData();renderTab('products');
     if(product.image_path){
       const removed=await supabaseClient.storage.from('bazario-products').remove([product.image_path]);
-      if(removed.error)throw removed.error;
+      if(removed.error)alert('Məhsul silindi, lakin şəkil faylını yaddaşdan təmizləmək mümkün olmadı: '+removed.error.message);
     }
-    const result=await supabaseClient.from('products').delete().eq('id',productId).eq('store_id',data.storeId);
-    if(result.error)throw result.error;
-    await refreshBackendData();renderTab('products');
   }catch(error){alert('Məhsulu silmək mümkün olmadı: '+error.message);}
 }
 async function updateBackendOrderStatus(orderId,nextStatus){
