@@ -86,3 +86,9 @@ The draft frontend branch now includes these Supabase-backed flows (they require
 Customer checkout is now present in the draft storefront: a customer can order one product with name, phone, and quantity. The page calls `create_order_protected`; the database rejects a filled honeypot and limits a store/phone pair to three orders per hour. The underlying `create_order` function is no longer directly executable by `anon` or `authenticated` users. This is a basic spam barrier, not full CAPTCHA or IP-based throttling. Before production, add a provider such as Cloudflare Turnstile, review abuse limits, and test against an approved store.
 
 The frontend has passed a JavaScript syntax parse and static element-reference checks in the repository branch. This is not a browser/device integration test: no Supabase project, keys, database migrations, Storage bucket, or real user accounts have been configured. The draft branch has not been merged and no deployment was triggered.
+
+## Product availability and order-history protection
+
+The seller product list now supports hiding and re-publishing a product by changing `is_active`. Hidden products disappear from the public storefront but remain in the database and in existing order snapshots. This is the preferred way to stop selling an item.
+
+A product referenced by an existing order cannot be deleted because `order_items.product_id` uses `ON DELETE RESTRICT`. The frontend therefore attempts the database deletion before removing its image file; if the database refuses deletion, the image is left intact and the seller is told to hide the product instead. This preserves historical order details.
