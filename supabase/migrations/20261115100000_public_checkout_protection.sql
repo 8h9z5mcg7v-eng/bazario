@@ -39,7 +39,18 @@ begin
   -- dashes, and parentheses cannot create separate buckets for one number.
   if p_buyer_phone is null
      or pg_catalog.btrim(p_buyer_phone) = ''
-     or p_buyer_phone !~ '^[0-9+() -]+
+     or p_buyer_phone !~ '^[0-9+() -]+$' then
+    raise exception 'Enter a valid contact number'
+      using errcode = '22023';
+  end if;
+
+  v_phone = pg_catalog.regexp_replace(p_buyer_phone, '[^0-9]', '', 'g');
+
+  if pg_catalog.char_length(v_phone) < 7
+     or pg_catalog.char_length(v_phone) > 15 then
+    raise exception 'Enter a valid contact number'
+      using errcode = '22023';
+  end if;
 
   select s.id
     into v_store_id
