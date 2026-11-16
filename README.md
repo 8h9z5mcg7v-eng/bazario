@@ -12,7 +12,7 @@ Azərbaycan dilində onlayn mağaza yaratma platforması.
   - Təsdiqlənmiş mağazalar üçün `?shop=MAĞAZA-ÜNVANI` ictimai vitrini.
   - Satıcı sifariş siyahısı və qorunan status dəyişmə funksiyası.
   - `admin.html` vasitəsilə pending mağazaları təsdiqləmək və ya rədd etmək.
-  - İctimai mağazada məhsul üzrə sifariş formu; server tərəfdə honeypot və eyni mağaza/telefon üçün saatda maksimum 3 sifariş limiti.
+  - İctimai mağazada məhsul üzrə sifariş formu; server tərəfdə honeypot, rəqəmlərə normallaşdırılmış telefon və eyni mağaza/nömrə üçün saatda maksimum 3 sifariş limiti.
 - `supabase/migrations/` qovluğunda cədvəllər, RLS, şəkil Storage-ı, sifariş statusları, admin təsdiqi və qorunan checkout üçün **beş SQL miqrasiyası** var.
 - `supabase/verify_installation.sql` miqrasiyalardan sonra quraşdırmanı oxuma rejimində yoxlayır.
 
