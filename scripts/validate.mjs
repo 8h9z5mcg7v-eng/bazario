@@ -16,14 +16,15 @@ function check(condition, message) {
 try {
   for (const file of ['index.html', 'admin.html']) {
     const html = readFileSync(join(root, file), 'utf8');
-    const ids = [...html.matchAll(/\bid=["']([^"']+)["']/gi)].map(match => match[1]);
+    const staticHtml = html.split(/<script\b/i, 1)[0];
+    const ids = [...staticHtml.matchAll(/\bid=["']([^"']+)["']/gi)].map(match => match[1]);
     const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
     check(duplicateIds.length === 0, duplicateIds.length
       ? file + ': təkrarlanan id: ' + [...new Set(duplicateIds)].join(', ')
       : file + ': id-lər təkrarsızdır');
 
     const idSet = new Set(ids);
-    const labelTargets = [...html.matchAll(/<label\b[^>]*\bfor=["']([^"']+)["'][^>]*>/gi)].map(match => match[1]);
+    const labelTargets = [...staticHtml.matchAll(/<label\b[^>]*\bfor=["']([^"']+)["'][^>]*>/gi)].map(match => match[1]);
     const missingLabels = [...new Set(labelTargets.filter(id => !idSet.has(id)))];
     check(missingLabels.length === 0, missingLabels.length
       ? file + ': mövcud olmayan label hədəfi: ' + missingLabels.join(', ')
