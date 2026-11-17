@@ -16,21 +16,21 @@ function check(condition, message) {
 try {
   for (const file of ['index.html', 'admin.html']) {
     const html = readFileSync(join(root, file), 'utf8');
-    const ids = [...html.matchAll(/\\bid=["']([^"']+)["']/gi)].map(match => match[1]);
+    const ids = [...html.matchAll(/\bid=["']([^"']+)["']/gi)].map(match => match[1]);
     const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
     check(duplicateIds.length === 0, duplicateIds.length
       ? file + ': təkrarlanan id: ' + [...new Set(duplicateIds)].join(', ')
       : file + ': id-lər təkrarsızdır');
 
     const idSet = new Set(ids);
-    const labelTargets = [...html.matchAll(/<label\\b[^>]*\\bfor=["']([^"']+)["'][^>]*>/gi)].map(match => match[1]);
+    const labelTargets = [...html.matchAll(/<label\b[^>]*\bfor=["']([^"']+)["'][^>]*>/gi)].map(match => match[1]);
     const missingLabels = [...new Set(labelTargets.filter(id => !idSet.has(id)))];
     check(missingLabels.length === 0, missingLabels.length
       ? file + ': mövcud olmayan label hədəfi: ' + missingLabels.join(', ')
       : file + ': label bağlantıları düzgündür');
 
-    const blocks = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)]
-      .filter(match => !/\\bsrc\\s*=/i.test(match[1]));
+    const blocks = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+      .filter(match => !/\bsrc\s*=/i.test(match[1]));
     check(blocks.length > 0, file + ': daxili JavaScript tapıldı');
     for (let i = 0; i < blocks.length; i++) {
       const tempFile = join(tempDir, file.replace(/[^a-z0-9]/gi, '_') + '-' + i + '.js');
@@ -56,14 +56,14 @@ try {
 
   for (const migration of actualMigrations) {
     const sql = readFileSync(join(migrationsDir, migration), 'utf8');
-    check(/^\\s*--[\\s\\S]*?\\bbegin;[\\s\\S]*\\bcommit;\\s*$/i.test(sql),
+    check(/^\s*--[\s\S]*?\bbegin;[\s\S]*\bcommit;\s*$/i.test(sql),
       migration + ': BEGIN/COMMIT sərhədləri mövcuddur');
   }
 
   const publicFiles = ['index.html', 'admin.html', 'supabase/config.js'];
   for (const file of publicFiles) {
     const source = readFileSync(join(root, file), 'utf8');
-    const exposesServiceRole = /(?:service_role|SUPABASE_SERVICE_ROLE_KEY)\\s*[:=]\\s*["']/i.test(source);
+    const exposesServiceRole = /(?:service_role|SUPABASE_SERVICE_ROLE_KEY)\s*[:=]\s*["']/i.test(source);
     check(!exposesServiceRole, file + ': service_role açarı brauzer faylında yoxdur');
   }
 } catch (error) {
