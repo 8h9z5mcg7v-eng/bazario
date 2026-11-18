@@ -57,8 +57,12 @@ try {
 
   for (const migration of actualMigrations) {
     const sql = readFileSync(join(migrationsDir, migration), 'utf8');
-    check(/^\s*--[\s\S]*?\bbegin;[\s\S]*\bcommit;\s*$/i.test(sql),
-      migration + ': BEGIN/COMMIT sərhədləri mövcuddur');
+    // Strip standalone SQL comments so trailing comments remain allowed, but
+    // executable tokens after COMMIT are rejected.
+    const executableSql = sql.replace(/^\s*--.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
+    const commitStatements = [...executableSql.matchAll(/\bcommit\s*;/gi)];
+    check(/^begin\s*;[\s\S]*commit\s*;\s*$/i.test(executableSql) && commitStatements.length === 1,
+      migration + ': vahid BEGIN/COMMIT transactiondır və COMMIT-dən sonra SQL yoxdur');
   }
 
   const publicFiles = ['index.html', 'admin.html', 'supabase/config.js'];
