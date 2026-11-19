@@ -34,7 +34,7 @@ section{padding:68px 0}.section-head{text-align:center;max-width:650px;margin:0 
 <section class="dashboard" id="dashboard"><div class="wrap"><div class="dash-top"><div><div class="eyebrow" id="dashMode" style="color:#c45a3a">SATICI PANELİ · DEMO</div><h2 id="dashTitle" style="margin:5px 0">Mağazan</h2></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline" style="display:none;background:#fff;color:#172033;border-color:#dce1ea" id="logoutBtn">Çıxış</button><button class="btn btn-outline" style="background:#fff;color:#172033;border-color:#dce1ea" id="backBtn">← Ana səhifə</button></div></div><div class="dash-grid"><aside class="side"><button class="active" data-tab="overview">İcmal</button><button data-tab="products">Məhsullar</button><button data-tab="orders">Sifarişlər</button><button data-tab="store">Mağaza linki</button></aside><div class="panel" id="dashContent"></div></div></div></section>
 <section id="publicPage" class="public-page"><div class="wrap"><a href="./" style="display:inline-block;margin:25px 0;color:#34415a;text-decoration:none;font-weight:750">← BAZARIO ana səhifə</a><div id="publicPageContent"><div class="empty">Mağaza yüklənir...</div></div></div></section>
 <div class="footer wrap"><span>© 2026 BAZARIO. Bütün hüquqlar qorunur.</span><span>Azərbaycan dilində onlayn mağaza platforması · <a href="./admin.html">Admin girişi</a></span></div>
-<div class="modal-backdrop" id="productModal"><div class="modal"><div class="modal-head"><h2>Məhsul əlavə et</h2><button class="close" id="closeProduct">×</button></div><form id="productForm"><div class="field"><label for="pname">Məhsulun adı</label><input id="pname" required placeholder="Məsələn, Dəri çanta"></div><div class="field"><label for="pprice">Qiymət (AZN)</label><input id="pprice" type="number" min="0.01" step="0.01" required placeholder="35"></div><div class="field"><label for="pdesc">Təsvir</label><textarea id="pdesc" rows="3" placeholder="Məhsul haqqında qısa məlumat"></textarea></div><div class="field"><label for="pimage">Məhsul şəkli</label><input id="pimage" type="file" accept="image/jpeg,image/png,image/webp"><div class="hint">JPEG, PNG və ya WebP · maksimum 1 MB.</div><img id="pimagePreview" alt="" style="display:none;width:100%;max-height:170px;object-fit:contain;margin-top:10px;border-radius:10px;background:#f4f5f7"></div><button class="btn btn-primary wide" type="submit">Məhsulu yadda saxla</button></form></div></div><div class="modal-backdrop" id="storeModal"><div class="modal"><div class="modal-head"><h2 id="publicStoreTitle">Mağaza vitrini</h2><button class="close" id="closeStore">×</button></div><div id="publicStoreBody"></div></div></div><div class="modal-backdrop" id="checkoutModal"><div class="modal"><div class="modal-head"><h2>Sifariş et</h2><button class="close" id="closeCheckout" type="button">×</button></div><div class="checkout-summary" id="checkoutProductTitle"></div><form id="checkoutForm"><div class="field"><label for="checkoutName">Ad və soyad</label><input id="checkoutName" required maxlength="100" autocomplete="name" placeholder="Ad və soyad"></div><div class="field"><label for="checkoutPhone">Əlaqə nömrəsi</label><input id="checkoutPhone" type="tel" required minlength="7" maxlength="30" autocomplete="tel" placeholder="+994..."></div><div class="field"><label for="checkoutQuantity">Miqdar</label><input id="checkoutQuantity" type="number" min="1" max="99" value="1" required></div><div class="honeypot" aria-hidden="true"><label for="checkoutWebsite">Vebsayt</label><input id="checkoutWebsite" name="website" type="text" tabindex="-1" autocomplete="off"></div><p class="hint">Sifariş göndərildikdən sonra satıcı əlaqə nömrənlə səninlə əlaqə saxlayacaq.</p><div id="checkoutNotice" class="hint" role="status"></div><button class="btn btn-primary wide" type="submit">Sifarişi göndər</button></form></div></div><div class="modal-backdrop" id="modal"><div class="modal"><div class="modal-head"><h2 id="modalTitle">Mağazanı yarat</h2><button class="close" id="closeModal">×</button></div><form id="shopForm"><div id="storeFields"><div class="field"><label for="owner">Adın</label><input id="owner" required placeholder="Məsələn, Aysel"></div><div class="field"><label for="shop">Mağazanın adı</label><input id="shop" required placeholder="Məsələn, Mirvari Store"></div><div class="field"><label for="slug">Mağaza ünvanı</label><input id="slug" required placeholder="mirvari-store"><div class="hint">Mağaza ünvanı yalnız latın hərfləri, rəqəmlər və tire ilə yaradılır.</div></div></div><div id="accountFields"><div class="field" id="emailField"><label for="email">E-poçt</label><input id="email" type="email" placeholder="ad@example.com"></div><div class="field" id="passwordField"><label for="password">Şifrə</label><input id="password" type="password" minlength="8" autocomplete="new-password" placeholder="Ən azı 8 simvol"></div></div><p class="hint" id="shopFormNotice">Demo rejimində məlumatlar yalnız bu brauzerdə saxlanılır.</p><button class="btn btn-primary wide" id="shopSubmit" type="submit">Demo mağazanı yarat</button></form></div></div><div class="modal-backdrop" id="authModal"><div class="modal"><div class="modal-head"><h2>Satıcı girişi</h2><button class="close" id="closeAuth">×</button></div><form id="authForm"><div class="field"><label for="loginEmail">E-poçt</label><input id="loginEmail" type="email" autocomplete="username" required placeholder="ad@example.com"></div><div class="field"><label for="loginPassword">Şifrə</label><input id="loginPassword" type="password" autocomplete="current-password" required></div><p class="hint" id="authNotice">Supabase bağlantısı qurulduqdan sonra real hesabla giriş edə bilərsən.</p><button class="btn btn-primary wide" type="submit">Giriş et</button><button class="btn btn-light wide" style="margin-top:8px" id="authSignupBtn" type="button">Hesab yarat</button></form></div></div>
+<div class="modal-backdrop" id="productModal"><div class="modal"><div class="modal-head"><h2>Məhsul əlavə et</h2><button class="close" id="closeProduct">×</button></div><form id="productForm"><div class="field"><label for="pname">Məhsulun adı</label><input id="pname" required placeholder="Məsələn, Dəri çanta"></div><div class="field"><label for="pprice">Qiymət (AZN)</label><input id="pprice" type="number" min="0.01" step="0.01" required placeholder="35"></div><div class="field"><label for="pdesc">Təsvir</label><textarea id="pdesc" rows="3" placeholder="Məhsul haqqında qısa məlumat"></textarea></div><div class="field"><label for="pimage">Məhsul şəkli</label><input id="pimage" type="file" accept="image/jpeg,image/png,image/webp"><div class="hint">JPEG, PNG və ya WebP · maksimum 1 MB.</div><img id="pimagePreview" alt="" style="display:none;width:100%;max-height:170px;object-fit:contain;margin-top:10px;border-radius:10px;background:#f4f5f7"></div><button class="btn btn-primary wide" type="submit">Məhsulu yadda saxla</button></form></div></div><div class="modal-backdrop" id="storeModal"><div class="modal"><div class="modal-head"><h2 id="publicStoreTitle">Mağaza vitrini</h2><button class="close" id="closeStore">×</button></div><div id="publicStoreBody"></div></div></div><div class="modal-backdrop" id="checkoutModal"><div class="modal"><div class="modal-head"><h2>Sifariş et</h2><button class="close" id="closeCheckout" type="button">×</button></div><div class="checkout-summary" id="checkoutProductTitle"></div><form id="checkoutForm"><div class="field"><label for="checkoutName">Ad və soyad</label><input id="checkoutName" required maxlength="100" autocomplete="name" placeholder="Ad və soyad"></div><div class="field"><label for="checkoutPhone">Əlaqə nömrəsi</label><input id="checkoutPhone" type="tel" required minlength="7" maxlength="30" autocomplete="tel" placeholder="+994..."></div><div class="field"><label for="checkoutQuantity">Miqdar</label><input id="checkoutQuantity" type="number" min="1" max="99" value="1" required></div><div class="honeypot" aria-hidden="true"><label for="checkoutWebsite">Vebsayt</label><input id="checkoutWebsite" name="website" type="text" tabindex="-1" autocomplete="off"></div><p class="hint">Sifariş göndərildikdən sonra satıcı əlaqə nömrənlə səninlə əlaqə saxlayacaq.</p><div id="checkoutNotice" class="hint" role="status"></div><button class="btn btn-primary wide" type="submit">Sifarişi göndər</button></form></div></div><div class="modal-backdrop" id="modal"><div class="modal"><div class="modal-head"><h2 id="modalTitle">Mağazanı yarat</h2><button class="close" id="closeModal">×</button></div><form id="shopForm"><div id="storeFields"><div class="field"><label for="owner">Adın</label><input id="owner" required placeholder="Məsələn, Aysel"></div><div class="field"><label for="shop">Mağazanın adı</label><input id="shop" required placeholder="Məsələn, Mirvari Store"></div><div class="field"><label for="slug">Mağaza ünvanı</label><input id="slug" required placeholder="mirvari-store"><div class="hint">Mağaza ünvanı yalnız latın hərfləri, rəqəmlər və tire ilə yaradılır.</div></div></div><div id="accountFields"><div class="field" id="emailField"><label for="email">E-poçt</label><input id="email" type="email" placeholder="ad@example.com"></div><div class="field" id="passwordField"><label for="password">Şifrə</label><input id="password" type="password" minlength="8" autocomplete="new-password" placeholder="Ən azı 8 simvol"></div></div><p class="hint" id="shopFormNotice">Demo rejimində məlumatlar yalnız bu brauzerdə saxlanılır.</p><button class="btn btn-primary wide" id="shopSubmit" type="submit">Demo mağazanı yarat</button></form></div></div><div class="modal-backdrop" id="authModal"><div class="modal"><div class="modal-head"><h2>Satıcı girişi</h2><button class="close" id="closeAuth">×</button></div><form id="authForm"><div class="field"><label for="loginEmail">E-poçt</label><input id="loginEmail" type="email" autocomplete="username" required placeholder="ad@example.com"></div><div class="field"><label for="loginPassword">Şifrə</label><input id="loginPassword" type="password" autocomplete="current-password" required></div><button class="btn btn-light wide" style="margin-top:8px" id="forgotPasswordBtn" type="button">Şifrəni unutdum</button><p class="hint" id="authNotice">Supabase bağlantısı qurulduqdan sonra real hesabla giriş edə bilərsən.</p><button class="btn btn-primary wide" type="submit">Giriş et</button><button class="btn btn-light wide" style="margin-top:8px" id="authSignupBtn" type="button">Hesab yarat</button></form></div></div>
 <script src="./supabase/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const $=s=>document.querySelector(s);
@@ -54,6 +54,7 @@ let publicStoreSlug='';
 let checkoutProductId='';
 let activeTab='overview';
 let formMode='demo';
+let authRecoveryMode=false;
 let pendingImage='';
 const save=()=>{if(data&&!data.backend)localStorage.setItem('bazario_demo',JSON.stringify(data));};
 function normalizeSlug(value){
@@ -79,9 +80,35 @@ function openModal(mode){
   $('#modal').classList.add('show');
 }
 function closeModal(){$('#modal').classList.remove('show');}
+function resetAuthFormMode(){
+  authRecoveryMode=false;
+  $('#authModal h2').textContent='Satıcı girişi';
+  $('#authForm label[for="loginPassword"]').textContent='Şifrə';
+  $('#loginPassword').autocomplete='current-password';
+  $('#loginPassword').removeAttribute('minlength');
+  $('#loginPassword').placeholder='';
+  $('#authForm button[type="submit"]').textContent='Giriş et';
+  $('#authSignupBtn').style.display='';
+  $('#forgotPasswordBtn').style.display='';
+  $('#authNotice').textContent='Supabase Auth vasitəsilə e-poçt və şifrə ilə giriş.';
+}
+function showPasswordRecovery(){
+  authRecoveryMode=true;
+  $('#authModal h2').textContent='Yeni şifrə təyin et';
+  $('#authForm label[for="loginPassword"]').textContent='Yeni şifrə';
+  $('#loginPassword').value='';
+  $('#loginPassword').autocomplete='new-password';
+  $('#loginPassword').minLength=8;
+  $('#loginPassword').placeholder='Ən azı 8 simvol';
+  $('#authForm button[type="submit"]').textContent='Şifrəni yenilə';
+  $('#authSignupBtn').style.display='none';
+  $('#forgotPasswordBtn').style.display='none';
+  $('#authNotice').textContent='Yeni şifrəni daxil et. Ən azı 8 simvol istifadə et.';
+  $('#authModal').classList.add('show');
+}
 function openAuthModal(){
   if(!supabaseClient){openModal('demo');return;}
-  $('#authNotice').textContent='Supabase Auth vasitəsilə e-poçt və şifrə ilə giriş.';
+  if(!authRecoveryMode)resetAuthFormMode();
   $('#authModal').classList.add('show');
 }
 function closeAuthModal(){$('#authModal').classList.remove('show');}
@@ -191,12 +218,42 @@ $('#shopForm').addEventListener('submit',async e=>{
     button.disabled=false;
   }
 });
+$('#forgotPasswordBtn').addEventListener('click',async()=>{
+  if(!supabaseClient)return;
+  const email=$('#loginEmail').value.trim();
+  if(!email){$('#authNotice').textContent='Əvvəlcə e-poçt ünvanını daxil et.';$('#loginEmail').focus();return;}
+  const button=$('#forgotPasswordBtn');
+  button.disabled=true;
+  try{
+    const redirectTo=window.location.origin+window.location.pathname;
+    const result=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo});
+    if(result.error)throw result.error;
+    $('#authNotice').textContent='Şifrə yeniləmə linki e-poçtuna göndərildi. Linki açdıqdan sonra yeni şifrəni təyin edə bilərsən.';
+  }catch(error){
+    $('#authNotice').textContent='Şifrə bərpa məktubunu göndərmək mümkün olmadı: '+error.message;
+  }finally{button.disabled=false;}
+});
 $('#authForm').addEventListener('submit',async e=>{
   e.preventDefault();
   if(!supabaseClient){alert('Supabase konfiqurasiyası yoxdur.');return;}
   const button=e.submitter||e.target.querySelector('button[type="submit"]');
   button.disabled=true;
   try{
+    if(authRecoveryMode){
+      const password=$('#loginPassword').value;
+      if(password.length<8)throw new Error('Yeni şifrə ən azı 8 simvol olmalıdır.');
+      const result=await supabaseClient.auth.updateUser({password});
+      if(result.error)throw result.error;
+      authRecoveryMode=false;
+      resetAuthFormMode();
+      closeAuthModal();
+      currentUser=result.data.user||currentUser;
+      const store=await loadOwnStore(currentUser);
+      if(store){data=store;showDashboard();}
+      else openModal('store');
+      alert('Şifrə uğurla yeniləndi.');
+      return;
+    }
     const result=await supabaseClient.auth.signInWithPassword({
       email:$('#loginEmail').value.trim(),password:$('#loginPassword').value
     });
@@ -207,12 +264,15 @@ $('#authForm').addEventListener('submit',async e=>{
     if(store){data=store;showDashboard();}
     else openModal('store');
   }catch(error){
-    alert('Giriş alınmadı: '+(error.message||'E-poçt və ya şifrə yanlışdır.'));
+    const message='Giriş və ya şifrə yeniləmə alınmadı: '+(error.message||'Məlumatları yoxla.');
+    if(authRecoveryMode)$('#authNotice').textContent=message;
+    else alert(message);
   }finally{button.disabled=false;}
 });
 if(supabaseClient){
-  supabaseClient.auth.onAuthStateChange((_event,session)=>{
+  supabaseClient.auth.onAuthStateChange((event,session)=>{
     currentUser=session?.user||null;
+    if(event==='PASSWORD_RECOVERY')showPasswordRecovery();
   });
   (async()=>{
     try{
