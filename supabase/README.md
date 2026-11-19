@@ -45,6 +45,10 @@ The anon/publishable key is designed to be used in browser code; database access
 
 The frontend flows have only been statically checked. They have not been tested against a live Supabase project because no project exists yet. Customer checkout is intentionally not exposed yet: the database RPC exists, but public request throttling/anti-bot protection and real security tests are still required.
 
+## Seller password recovery
+
+The seller login dialog includes **Şifrəni unutdum**. It sends a Supabase Auth recovery email and, after the user opens the link, displays a new-password form. Before testing this flow, open **Authentication → URL Configuration** in Supabase and add the exact BAZARIO site URL (the current page origin and path) to the allowed Redirect URLs. The email provider must be enabled. The recovery email is not sent until a Supabase project and public browser configuration exist.
+
 ## Applying it later from an iPhone
 1. Open the Supabase dashboard in Safari and create/select a project only after explicitly deciding to use Supabase Free.
 2. Open **SQL Editor** and create a new query.
