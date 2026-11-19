@@ -65,6 +65,13 @@ try {
       migration + ': vahid BEGIN/COMMIT transactiondır və COMMIT-dən sonra SQL yoxdur');
   }
 
+  const authFrontend = readFileSync(join(root, 'index.html'), 'utf8');
+  check(authFrontend.includes('id="forgotPasswordBtn"')
+    && authFrontend.includes('resetPasswordForEmail')
+    && authFrontend.includes("event==='PASSWORD_RECOVERY'")
+    && authFrontend.includes('auth.updateUser({password})'),
+    'Satıcı şifəsinin e-poçtla bərpası və yeni şifrə təyin etmə axını mövcuddur');
+
   const publicFiles = ['index.html', 'admin.html', 'supabase/config.js'];
   for (const file of publicFiles) {
     const source = readFileSync(join(root, file), 'utf8');
