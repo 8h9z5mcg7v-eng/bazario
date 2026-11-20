@@ -78,6 +78,12 @@ try {
     const exposesServiceRole = /(?:service_role|SUPABASE_SERVICE_ROLE_KEY)\s*[:=]\s*["']/i.test(source);
     check(!exposesServiceRole, file + ': service_role açarı brauzer faylında yoxdur');
   }
+
+  const readme = readFileSync(join(root, 'supabase', 'README.md'), 'utf8');
+  check(readme.includes('create_order_protected')
+    && readme.includes('not full CAPTCHA or IP-based throttling')
+    && !readme.includes('Customer checkout is intentionally not exposed yet'),
+    'README checkout status matches the implemented protected draft flow');
 } catch (error) {
   errors.push('Yoxlama icra edilərkən xəta: ' + error.message);
 } finally {
