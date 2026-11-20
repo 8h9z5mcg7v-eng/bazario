@@ -1,6 +1,6 @@
 # BAZARIO backend foundation
 
-This folder contains the first PostgreSQL/Supabase schema migration for BAZARIO.
+This folder contains BAZARIO's PostgreSQL/Supabase migrations, a read-only installation verifier, and the public browser configuration template.
 
 ## What this migration provides
 - Seller profiles created automatically when an Auth user signs up.
@@ -16,7 +16,7 @@ This folder contains the first PostgreSQL/Supabase schema migration for BAZARIO.
 
 ## Important boundaries
 - This is a schema file only. It does not create a Supabase project, configure email delivery, create a Storage bucket, connect the website, or deploy a backend.
-- The `main` branch remains the published browser-only demo. The open draft PR contains Supabase Auth, seller product/image management, public approved-store pages, seller order management, and the admin approval page. These features require the Supabase project, keys, and migrations before they can run against live data.
+- The `main` branch remains the published browser-only demo. The open draft PR contains Supabase Auth, seller product/image management, public approved-store pages, seller order management, protected customer checkout, and the admin approval page. These features require the Supabase project, public browser key, and migrations before they can run against live data.
 - Admin membership must be added manually from the Supabase SQL Editor after the administrator has registered. Never expose a service-role key in the browser.
 - The migration is intended for a new, empty Supabase project. Do not run it twice on the same database.
 - Before a public launch, add request throttling/anti-bot protection, email verification settings, and a backup/export routine.
@@ -43,7 +43,7 @@ The draft frontend contains email/password Auth, seller-store creation, product/
 
 The anon/publishable key is designed to be used in browser code; database access must remain protected by the included RLS policies. **Never paste a service_role/secret key into `config.js`, HTML, or any public repository.** Do not share a password or key in ChatGPT.
 
-The frontend flows have only been statically checked. They have not been tested against a live Supabase project because no project exists yet. Customer checkout is intentionally not exposed yet: the database RPC exists, but public request throttling/anti-bot protection and real security tests are still required.
+The frontend flows have only been statically checked. They have not been tested against a live Supabase project because no project exists yet. Customer checkout is included in the draft storefront and calls `create_order_protected`; the database applies a honeypot and a per-store/per-normalized-phone hourly limit. This is only a basic spam barrier, not full CAPTCHA or IP-based throttling, so real integration and abuse testing are still required.
 
 ## Seller password recovery
 
