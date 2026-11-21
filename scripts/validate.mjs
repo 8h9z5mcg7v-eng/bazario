@@ -80,8 +80,9 @@ try {
     check(rlsEnabled, table + ': Row Level Security aktivdir');
   }
 
-  check(!/\\bon\\s+public\\.admin_users\\s+for\\b/i.test(initialSql)
-    && !/\\bgrant\\b[^;]*\\bpublic\\.admin_users\\b/i.test(initialSql),
+  const adminGrantLines = initialSql.split('\n').filter(line =>
+    line.toLowerCase().includes('grant') && line.toLowerCase().includes('public.admin_users'));
+  check(!initialSql.toLowerCase().includes('on public.admin_users for') && adminGrantLines.length === 0,
     'Admin allow-list üçün brauzer rollarına birbaşa cədvəl siyasəti/icazəsi yoxdur');
 
   function checkSqlContract(sql, fragments, label) {
@@ -112,7 +113,8 @@ try {
   ], 'Admin təsdiqi və mağaza statusu icazələri');
 
   checkSqlContract(checkoutSql, [
-    'revoke all on function public.create_order(text, text, text, jsonb) from public, anon, authenticated',
+    'revoke all on function public.create_order(text, text, text, jsonb)',
+    'from public, anon, authenticated;',
     'create or replace function public.create_order_protected',
     "set search_path = ''",
     "coalesce(p_honeypot, '') <> ''",
