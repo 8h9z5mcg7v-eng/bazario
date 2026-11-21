@@ -65,6 +65,68 @@ try {
       migration + ': vahid BEGIN/COMMIT transactiondır və COMMIT-dən sonra SQL yoxdur');
   }
 
+  const sqlFiles = Object.fromEntries(expectedMigrations.map(name => [
+    name,
+    readFileSync(join(migrationsDir, name), 'utf8')
+  ]));
+  const initialSql = sqlFiles['20261109000000_initial_schema.sql'];
+  const storageSql = sqlFiles['20261110000000_product_image_storage.sql'];
+  const orderSql = sqlFiles['20261111000000_seller_order_status_workflow.sql'];
+  const adminSql = sqlFiles['20261115000000_admin_approval_api.sql'];
+  const checkoutSql = sqlFiles['20261115100000_public_checkout_protection.sql'];
+
+  for (const table of ['profiles', 'admin_users', 'stores', 'products', 'orders', 'order_items']) {
+    const rlsEnabled = new RegExp('alter\\s+table\\s+public\\.' + table + '\\s+enable\\s+row\\s+level\\s+security', 'i').test(initialSql);
+    check(rlsEnabled, table + ': Row Level Security aktivdir');
+  }
+
+  check(!/\\bon\\s+public\\.admin_users\\s+for\\b/i.test(initialSql)
+    && !/\\bgrant\\b[^;]*\\bpublic\\.admin_users\\b/i.test(initialSql),
+    'Admin allow-list üçün brauzer rollarına birbaşa cədvəl siyasəti/icazəsi yoxdur');
+
+  function checkSqlContract(sql, fragments, label) {
+    const missing = fragments.filter(fragment => !sql.toLowerCase().includes(fragment.toLowerCase()));
+    check(missing.length === 0, missing.length
+      ? label + ': çatışmayan qaydalar: ' + missing.join(' | ')
+      : label + ': təhlükəsizlik qaydaları mövcuddur');
+  }
+
+  checkSqlContract(storageSql, [
+    "'bazario-products'", '1048576', 'image/jpeg', 'image/png', 'image/webp',
+    'for insert', 'for update', 'for delete', 'storage.foldername(name)'
+  ], 'Məhsul şəkillərinin Storage məhdudiyyətləri');
+
+  checkSqlContract(orderSql, [
+    'revoke update on public.orders from authenticated',
+    'create or replace function public.seller_update_order_status',
+    'security definer', "set search_path = ''",
+    'v_owner_id <> auth.uid()', 'invalid order status transition'
+  ], 'Satıcı sifariş statusunun qorunan keçidləri');
+
+  checkSqlContract(adminSql, [
+    'create or replace function public.admin_review_store',
+    'auth.uid() is null or not private.is_admin()',
+    "v_current_status <> 'pending'::public.store_status",
+    'revoke update on public.stores from authenticated',
+    'grant update (name, slug, description) on public.stores to authenticated'
+  ], 'Admin təsdiqi və mağaza statusu icazələri');
+
+  checkSqlContract(checkoutSql, [
+    'revoke all on function public.create_order(text, text, text, jsonb) from public, anon, authenticated',
+    'create or replace function public.create_order_protected',
+    "set search_path = ''",
+    "coalesce(p_honeypot, '') <> ''",
+    'regexp_replace(p_buyer_phone',
+    'pg_advisory_xact_lock',
+    "now() - interval '1 hour'",
+    'v_recent_orders >= 3'
+  ], 'İctimai sifarişin honeypot, telefon normallaşdırma və limit qoruması');
+
+  const productUi = readFileSync(join(root, 'index.html'), 'utf8');
+  check(productUi.includes('data-edit-product=') && productUi.includes('function editBackendProduct(')
+    && productUi.includes('function saveBackendProduct()') && productUi.includes('image_path:imagePath'),
+    'Satıcı panelində məhsul redaktəsi mövcuddur');
+
   const authFrontend = readFileSync(join(root, 'index.html'), 'utf8');
   check(authFrontend.includes('id="forgotPasswordBtn"')
     && authFrontend.includes('resetPasswordForEmail')
