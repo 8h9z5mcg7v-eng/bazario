@@ -2,27 +2,34 @@
 
 Azərbaycan dilində onlayn mağaza yaratma platforması.
 
-## Hazırkı mərhələ
+## Hazırkı vəziyyət
 
-Bu repository-də mobil uyğun frontend prototipi və ilkin backend sxemi var:
-- BAZARIO ana səhifəsi və nümunə məhsul vitrini
-- Demo mağaza yaratma formu və brauzerdə saxlanılan satıcı paneli
-- Demo məhsul əlavə etmə, şəkil önizləməsi və sifariş ssenarisi
-- GitHub Pages üzərindən yayımlanan demo
-- supabase/migrations/20261109000000_initial_schema.sql — satıcı profilləri, mağazalar, məhsullar, sifarişlər, admin rolu, Row Level Security və serverdə qiymət hesablayan sifariş funksiyası üçün ilkin SQL sxemi
-- supabase/migrations/20261110000000_product_image_storage.sql — satıcıya məxsus məhsul şəkilləri üçün 1 MB-lıq Storage bucket və sahiblik siyasətləri
-- supabase/migrations/20261111000000_seller_order_status_workflow.sql — satıcının sifarişləri mərhələli idarə etməsi üçün təhlükəsiz status dəyişmə funksiyası
+- `main` budağında GitHub Pages üzərindən yayımlanan ilkin demo var. Demo məlumatları yalnız brauzerin `localStorage` yaddaşında saxlanılır.
+- `feature/supabase-auth-scaffold` budağında Supabase ilə işləyən draft frontend və backend sxemi hazırlanıb:
+  - Satıcı e-poçt/şifrə qeydiyyatı, giriş, sessiyanın bərpası və çıxış.
+  - `pending` statusu ilə mağaza yaratmaq və admin təsdiqi.
+  - Məhsul əlavə etmək, adı/qiyməti/təsviri redaktə etmək, şəkli təhlükəsiz əvəzləmək, gizlətmək/yayımlamaq və silmək.
+  - Təsdiqlənmiş mağazalar üçün `?shop=MAĞAZA-ÜNVANI` ictimai vitrini.
+  - Satıcı sifariş siyahısı və qorunan status dəyişmə funksiyası.
+  - `admin.html` vasitəsilə pending mağazaları təsdiqləmək və ya rədd etmək.
+  - İctimai mağazada məhsul üzrə sifariş formu; server tərəfdə honeypot, rəqəmlərə normallaşdırılmış telefon və eyni mağaza/nömrə üçün saatda maksimum 3 sifariş limiti.
+- `supabase/migrations/` qovluğunda cədvəllər, RLS, şəkil Storage-ı, sifariş statusları, admin təsdiqi və qorunan checkout üçün **beş SQL miqrasiyası** var.
+- `supabase/verify_installation.sql` miqrasiyalardan sonra quraşdırmanı oxuma rejimində yoxlayır.
 
-## Vacib məhdudiyyət
+## Vacib məhdudiyyətlər
 
-Frontend hələ localStorage demo rejimindədir. Real qeydiyyat/giriş, server bazası, Storage şəkil yükləməsi, ictimai mağaza URL-ləri, real sifariş API-si və admin paneli sayta qoşulmayıb. İlkin baza, şəkil Storage və sifariş statusu miqrasiyaları repository-dədir, lakin Supabase layihəsinə tətbiq edilməyib. Demo linki real mağaza linki deyil.
+Supabase layihəsi yaradılmayıb, açarlar əlavə edilməyib və miqrasiyalar real bazada icra olunmayıb. Buna görə draft frontend-in real Auth, Storage, mağaza, sifariş və admin funksiyaları canlı sınaqdan keçirilməyib. Checkout qoruması ilkin spam baryeridir; tam CAPTCHA/IP əsaslı limit deyil. İctimai istifadədən əvvəl əlavə anti-bot qoruması və iki ayrı satıcı hesabı ilə təhlükəsizlik sınaqları lazımdır.
+
+`feature/supabase-auth-scaffold` üçün açıq draft [PR №1](https://github.com/8h9z5mcg7v-eng/bazario/pull/1) var. O, `main`-ə birləşdirilməyib. `main`-dəki yayımlanmış demo dəyişdirilməyib.
 
 ## Növbəti mərhələlər
 
-1. Supabase Free limitlərini və layihə qurulmasını təsdiqləmək.
-2. SQL sxemini yeni verilənlər bazasına tətbiq etmək və təhlükəsizlik siyasətlərini yoxlamaq.
-3. Auth, Storage və real mağaza səhifələrini frontend-ə qoşmaq.
-4. Sifarişlərin satıcı panelində görünməsi və admin təsdiqi.
-5. Ödənişli paketlər və ödəniş provayderi inteqrasiyası.
+1. İstifadəçi ayrıca təsdiqlədikdən sonra Supabase Free layihəsini qurmaq.
+2. Beş SQL miqrasiyasını timestamp ardıcıllığı ilə tətbiq etmək.
+3. `verify_installation.sql` skriptini işlətmək.
+4. `supabase/config.js` faylına yalnız Project URL və public anon/publishable key əlavə etmək.
+5. Admin hesabını `admin_users` allow-list-ə daxil edib admin panelini sınamaq.
+6. İki ayrı satıcı hesabı, məhsul şəkilləri, ictimai sifariş və status icazələri ilə real təhlükəsizlik sınaqları aparmaq.
+7. PR-ı nəzərdən keçirdikdən sonra ayrıca təsdiqlə birləşdirmək və yayımlamaq.
 
-Ödənişli xidmətlər, domen alışı və production deploy ayrıca təsdiq tələb edir.
+Ödənişli resurs, domen alışı, production deploy və `main` budağına merge ayrıca təsdiq tələb edir. Lovable istifadə edilmir; UstaTap və Taxt və Qılınc repository-lərinə toxunulmur.
