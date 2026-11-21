@@ -82,7 +82,7 @@ The draft frontend branch now includes these Supabase-backed flows (they require
 
 - Seller sign-up/sign-in and session restoration.
 - Store creation with the default `pending` approval state.
-- Seller product listing, creation, image upload to `bazario-products`, and deletion.
+- Seller product listing, creation, editing of product details, safe image replacement, image upload to `bazario-products`, and deletion.
 - Public read-only storefronts at the same site URL with `?shop=STORE_SLUG`; only approved stores and active products are returned by the database policies.
 - Seller order listing and guarded status changes through `seller_update_order_status`.
 - A separate responsive `admin.html` page that checks the current user's admin role and approves or rejects pending stores through `admin_review_store`.
