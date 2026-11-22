@@ -136,6 +136,14 @@ try {
     && authFrontend.includes('auth.updateUser({password})'),
     'Satıcı şifəsinin e-poçtla bərpası və yeni şifrə təyin etmə axını mövcuddur');
 
+  const storeSettingsUi = readFileSync(join(root, 'index.html'), 'utf8');
+  check(storeSettingsUi.includes('data-tab="settings"')
+    && storeSettingsUi.includes('id="storeSettingsForm"')
+    && storeSettingsUi.includes('async function saveBackendStoreSettings')
+    && storeSettingsUi.includes(".eq('id',data.storeId).eq('owner_id',currentUser.id)")
+    && storeSettingsUi.includes("normalizeSlug($('#settingsStoreSlug').value)"),
+    'Satıcı mağaza adını, unikal ünvanını və təsvirini təhlükəsiz yeniləyə bilir');
+
   const publicFiles = ['index.html', 'admin.html', 'supabase/config.js'];
   for (const file of publicFiles) {
     const source = readFileSync(join(root, file), 'utf8');
