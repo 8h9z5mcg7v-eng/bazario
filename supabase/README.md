@@ -4,7 +4,7 @@ This folder contains BAZARIO's PostgreSQL/Supabase migrations, a read-only insta
 
 ## What this migration provides
 - Seller profiles created automatically when an Auth user signs up.
-- Store records with unique, shareable slugs and an administrator-controlled approval state.
+- Store records with unique, shareable slugs and an administrator-controlled approval state; sellers can update their store name, slug, and description without changing approval status.
 - Products owned by a store, with an image storage path (not a base64 image).
 - A public `bazario-products` image bucket, limited to JPEG/PNG/WebP files up to 1 MB; only the owning seller can upload, replace, or delete files inside that store's UUID folder.
 - Customer orders and immutable product-name/price snapshots.
