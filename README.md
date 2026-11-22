@@ -7,7 +7,7 @@ Azərbaycan dilində onlayn mağaza yaratma platforması.
 - `main` budağında GitHub Pages üzərindən yayımlanan ilkin demo var. Demo məlumatları yalnız brauzerin `localStorage` yaddaşında saxlanılır.
 - `feature/supabase-auth-scaffold` budağında Supabase ilə işləyən draft frontend və backend sxemi hazırlanıb:
   - Satıcı e-poçt/şifrə qeydiyyatı, giriş, sessiyanın bərpası və çıxış.
-  - `pending` statusu ilə mağaza yaratmaq və admin təsdiqi.
+  - `pending` statusu ilə mağaza yaratmaq, mağaza adını/ünvanını/təsvirini redaktə etmək və admin təsdiqi.
   - Məhsul əlavə etmək, adı/qiyməti/təsviri redaktə etmək, şəkli təhlükəsiz əvəzləmək, gizlətmək/yayımlamaq və silmək.
   - Təsdiqlənmiş mağazalar üçün `?shop=MAĞAZA-ÜNVANI` ictimai vitrini.
   - Satıcı sifariş siyahısı və qorunan status dəyişmə funksiyası.
