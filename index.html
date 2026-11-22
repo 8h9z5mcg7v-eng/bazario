@@ -317,6 +317,39 @@ document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()
   document.querySelectorAll('[data-tab]').forEach(x=>x.classList.remove('active'));
   b.classList.add('active');renderTab(b.dataset.tab);
 }));
+async function saveBackendStoreSettings(event){
+  event.preventDefault();
+  const button=event.target.querySelector('button[type="submit"]');
+  const name=$('#settingsStoreName').value.trim();
+  const slug=normalizeSlug($('#settingsStoreSlug').value);
+  const description=$('#settingsStoreDescription').value.trim();
+  if(name.length<2||name.length>100){alert('Mağaza adı 2–100 simvol olmalıdır.');return;}
+  if(slug.length<3||slug.length>40){alert('Mağaza ünvanı 3–40 simvol olmalıdır.');return;}
+  if(description.length>1000){alert('Mağaza təsviri 1000 simvoldan uzun ola bilməz.');return;}
+  button.disabled=true;
+  try{
+    const result=await supabaseClient.from('stores')
+      .update({name,slug,description})
+      .eq('id',data.storeId).eq('owner_id',currentUser.id)
+      .select('id,name,slug,description,status').maybeSingle();
+    if(result.error){
+      if(result.error.code==='23505')throw new Error('Bu mağaza ünvanı artıq istifadə olunur. Başqa ünvan seç.');
+      throw result.error;
+    }
+    if(!result.data)throw new Error('Mağaza tapılmadı və ya dəyişiklik üçün icazə yoxdur.');
+    data.shop=result.data.name;
+    data.slug=result.data.slug;
+    data.description=result.data.description||'';
+    data.status=result.data.status;
+    $('#dashTitle').textContent=data.shop;
+    renderTab('settings');
+    alert('Mağaza məlumatları yadda saxlanıldı. Yeni link mağaza linki bölməsində görünür.');
+  }catch(error){
+    alert('Mağaza məlumatlarını yadda saxlamaq mümkün olmadı: '+error.message);
+  }finally{
+    button.disabled=false;
+  }
+}
 function renderTab(tab){
   let c=$('#dashContent');
   activeTab=tab;
@@ -338,6 +371,9 @@ function renderTab(tab){
       }).join(''):'<div class="empty">Hələ sifariş yoxdur. Müştərilər təsdiqlənmiş mağaza vitrininə daxil olaraq məhsul səhifəsindən sifariş verə bilərlər.</div>';
       c.innerHTML='<h3>Müştəri sifarişləri</h3>'+cards;
       c.querySelectorAll('[data-order-id]').forEach(button=>button.addEventListener('click',()=>updateBackendOrderStatus(button.dataset.orderId,button.dataset.nextStatus)));
+    }else if(tab==='settings'){
+      c.innerHTML='<h3>Mağaza məlumatları</h3><p class="hint">Mağazanın adı, paylaşılabilən ünvanı və təsvirini yenilə. Ünvanı dəyişsən, əvvəlki link artıq işləməyəcək.</p><form id="storeSettingsForm"><div class="field"><label for="settingsStoreName">Mağazanın adı</label><input id="settingsStoreName" maxlength="100" required value="'+esc(data.shop)+'"></div><div class="field"><label for="settingsStoreSlug">Mağaza ünvanı</label><input id="settingsStoreSlug" maxlength="40" required value="'+esc(data.slug)+'"><div class="hint">3–40 simvol; latın hərfləri, rəqəmlər və tire. Ünvan unikal olmalıdır.</div></div><div class="field"><label for="settingsStoreDescription">Mağaza təsviri</label><textarea id="settingsStoreDescription" rows="4" maxlength="1000" placeholder="Mağazan və məhsulların haqqında qısa məlumat">'+esc(data.description||'')+'</textarea></div><button class="btn btn-primary" type="submit">Məlumatları yadda saxla</button></form>';
+      $('#storeSettingsForm').addEventListener('submit',saveBackendStoreSettings);
     }else{
       const url=storeShareUrl(data.slug);
       c.innerHTML='<h3>Mağaza linkin</h3><p class="hint">Bu link yalnız admin təsdiqindən sonra ictimai məhsul vitrininə aparacaq.</p><div class="store-link">'+esc(url)+'</div><button class="btn btn-primary" id="copyStoreLink" style="margin-top:12px">Linki kopyala</button><p class="hint" style="margin-top:14px">Status: <b>'+esc(statusLabel(data.status))+'</b></p>';
@@ -351,6 +387,8 @@ function renderTab(tab){
     c.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><h3>Məhsulların</h3><button class="btn btn-primary" id="addProduct">+ Əlavə et</button></div>'+(data.products.length?'<table class="table"><tr><th>Məhsul</th><th>Qiymət</th></tr>'+data.products.map(p=>'<tr><td>'+(p.image?'<img src="'+p.image+'" alt="" style="width:42px;height:42px;object-fit:cover;border-radius:7px;vertical-align:middle;margin-right:8px">':'')+esc(p.name)+'</td><td>'+esc(p.price)+' ₼</td></tr>').join('')+'</table>':'<div class="empty">Hələ məhsul əlavə edilməyib.</div>');
   }else if(tab==='orders'){
     c.innerHTML='<h3>Müştəri sifarişləri</h3>'+(data.orders.length?data.orders.map(o=>'<div class="store-link" style="margin:10px 0"><b>'+esc(o.name)+'</b> · '+esc(o.product)+' · '+esc(o.phone)+'</div>').join(''):'<div class="empty">Hələ sifariş yoxdur. Bu yalnız demo sifariş siyahısıdır.</div>');
+  }else if(tab==='settings'){
+    c.innerHTML='<h3>Mağaza məlumatları</h3><div class="empty">Mağaza məlumatlarının real redaktəsi Supabase bağlantısı qurulduqdan sonra aktiv olur.</div>';
   }else{
     c.innerHTML='<h3>Demo mağaza linki</h3><p class="hint">Bu, yalnız demo vitrindir; ictimai link aktiv deyil.</p><div class="store-link">BAZARIO demo / '+esc(data.slug)+'</div><button class="btn btn-primary" style="margin-top:14px" id="previewStore">Mağaza vitrininə bax</button><p class="hint" style="margin-top:18px">Admin təsdiqi: <b>'+(data.approved?'Təsdiqlənib':'Gözləyir')+'</b></p>';
   }
