@@ -76,7 +76,7 @@ begin
 end;
 $$;
 
-revoke all on function public.seller_update_order_status(uuid, public.order_status) from public;
+revoke all on function public.seller_update_order_status(uuid, public.order_status) from public, anon;
 grant execute on function public.seller_update_order_status(uuid, public.order_status) to authenticated;
 
 comment on function public.seller_update_order_status(uuid, public.order_status) is
