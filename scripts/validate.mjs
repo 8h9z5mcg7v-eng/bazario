@@ -100,6 +100,7 @@ try {
   checkSqlContract(orderSql, [
     'revoke update on public.orders from authenticated',
     'create or replace function public.seller_update_order_status',
+    'revoke all on function public.seller_update_order_status(uuid, public.order_status) from public, anon;',
     'security definer', "set search_path = ''",
     'v_owner_id <> auth.uid()', 'invalid order status transition'
   ], 'Satıcı sifariş statusunun qorunan keçidləri');
