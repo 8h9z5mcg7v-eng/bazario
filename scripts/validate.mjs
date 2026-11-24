@@ -96,7 +96,7 @@ try {
     "'bazario-products'", '1048576', 'image/jpeg', 'image/png', 'image/webp',
     'for insert', 'for update', 'for delete', 'storage.foldername(storage.objects.name)'
   ], 'Məhsul şəkillərinin Storage məhdudiyyətləri');
-  check((storageSql.match(/storage\\.foldername\\(storage\\.objects\\.name\\)/gi) || []).length === 4,
+  check((storageSql.match(/storage\.foldername\(storage\.objects\.name\)/gi) || []).length === 4,
     'Storage siyasətləri xarici objects.name sütununa açıq istinad edir');
 
   checkSqlContract(orderSql, [
