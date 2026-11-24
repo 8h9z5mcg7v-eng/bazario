@@ -263,6 +263,9 @@ select
       and s.owner_id = auth.uid()
   ) as owner_match,
   has_function_privilege('authenticated', 'storage.foldername(text)', 'EXECUTE') as can_check_folder;
+select policyname, roles, cmd, with_check
+from pg_catalog.pg_policies
+where schemaname = 'storage' and tablename = 'objects';
 insert into storage.objects (bucket_id, name)
 values ('bazario-products', '10000000-0000-4000-8000-000000000001/product.webp');
 
