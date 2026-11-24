@@ -15,6 +15,7 @@ Azərbaycan dilində onlayn mağaza yaratma platforması.
   - İctimai mağazada məhsul üzrə sifariş formu; server tərəfdə honeypot, rəqəmlərə normallaşdırılmış telefon və eyni mağaza/nömrə üçün saatda maksimum 3 sifariş limiti.
 - `supabase/migrations/` qovluğunda cədvəllər, RLS, şəkil Storage-ı, sifariş statusları, admin təsdiqi və qorunan checkout üçün **beş SQL miqrasiyası** var.
 - `supabase/verify_installation.sql` miqrasiyalardan sonra quraşdırmanı oxuma rejimində yoxlayır.
+- GitHub Actions müvəqqəti PostgreSQL 16 bazasında beş miqrasiyanı tətbiq edir, quraşdırma yoxlamasını və RLS, satıcılararası təcrid, sifariş, admin təsdiqi və şəkil Storage siyasətləri üzrə smoke testləri icra edir. Bu, canlı Supabase layihəsinin sınağını əvəz etmir.
 
 ## Vacib məhdudiyyətlər
 
