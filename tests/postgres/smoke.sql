@@ -253,6 +253,16 @@ $$;
 -- Storage policies allow the owner folder and reject another seller's folder.
 set role authenticated;
 select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000001', false);
+select
+  auth.uid() as test_user,
+  storage.foldername('10000000-0000-4000-8000-000000000001/product.webp') as path_folders,
+  (storage.foldername('10000000-0000-4000-8000-000000000001/product.webp'))[1] as first_folder,
+  exists (
+    select 1 from public.stores s
+    where s.id::text = (storage.foldername('10000000-0000-4000-8000-000000000001/product.webp'))[1]
+      and s.owner_id = auth.uid()
+  ) as owner_match,
+  has_function_privilege('authenticated', 'storage.foldername(text)', 'EXECUTE') as can_check_folder;
 insert into storage.objects (bucket_id, name)
 values ('bazario-products', '10000000-0000-4000-8000-000000000001/product.webp');
 
