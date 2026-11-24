@@ -33,7 +33,7 @@ with check (
   and exists (
     select 1
     from public.stores s
-    where s.id::text = (storage.foldername(name))[1]
+    where s.id::text = (storage.foldername(storage.objects.name))[1]
       and s.owner_id = auth.uid()
   )
 );
@@ -48,7 +48,7 @@ using (
   and exists (
     select 1
     from public.stores s
-    where s.id::text = (storage.foldername(name))[1]
+    where s.id::text = (storage.foldername(storage.objects.name))[1]
       and s.owner_id = auth.uid()
   )
 )
@@ -57,7 +57,7 @@ with check (
   and exists (
     select 1
     from public.stores s
-    where s.id::text = (storage.foldername(name))[1]
+    where s.id::text = (storage.foldername(storage.objects.name))[1]
       and s.owner_id = auth.uid()
   )
 );
@@ -72,7 +72,7 @@ using (
   and exists (
     select 1
     from public.stores s
-    where s.id::text = (storage.foldername(name))[1]
+    where s.id::text = (storage.foldername(storage.objects.name))[1]
       and s.owner_id = auth.uid()
   )
 );
