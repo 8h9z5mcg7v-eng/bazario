@@ -43,7 +43,7 @@ The draft frontend contains email/password Auth, seller-store creation, product/
 
 The anon/publishable key is designed to be used in browser code; database access must remain protected by the included RLS policies. **Never paste a service_role/secret key into `config.js`, HTML, or any public repository.** Do not share a password or key in ChatGPT.
 
-The frontend flows have only been statically checked. They have not been tested against a live Supabase project because no project exists yet. Customer checkout is included in the draft storefront and calls `create_order_protected`; the database applies a honeypot and a per-store/per-normalized-phone hourly limit. This is only a basic spam barrier, not full CAPTCHA or IP-based throttling, so real integration and abuse testing are still required.
+The browser flows have passed JavaScript syntax and static element-reference checks, but they have not been tested in a browser against live Supabase because no project exists yet. Separately, GitHub Actions starts a disposable PostgreSQL 16 database, applies all five migrations using a minimal compatibility fixture for Supabase Auth/Storage objects, runs `verify_installation.sql`, and executes SQL smoke tests for RLS visibility, seller-to-seller isolation, order-status transitions, administrator approval, protected checkout, phone normalization, honeypot/hourly limits, and image-folder ownership. This validates PostgreSQL migration execution and database rules; it does not emulate the Supabase Auth/Storage APIs, email delivery, or real iPhone browser integration. Customer checkout still uses a basic spam barrier, not full CAPTCHA or IP-based throttling, so live integration and abuse testing remain necessary.
 
 ## Seller password recovery
 
