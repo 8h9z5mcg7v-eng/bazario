@@ -157,6 +157,24 @@ try {
     && readme.includes('not full CAPTCHA or IP-based throttling')
     && !readme.includes('Customer checkout is intentionally not exposed yet'),
     'README checkout status matches the implemented protected draft flow');
+
+  const postgresFixture = readFileSync(join(root, 'tests', 'postgres', 'supabase_stub.sql'), 'utf8');
+  const postgresSmoke = readFileSync(join(root, 'tests', 'postgres', 'smoke.sql'), 'utf8');
+  const workflow = readFileSync(join(root, '.github', 'workflows', 'validate.yml'), 'utf8');
+  check(postgresFixture.includes('create role anon') && postgresFixture.includes('create role authenticated')
+    && postgresFixture.includes('auth.uid()') && postgresFixture.includes('storage.foldername'),
+    'PostgreSQL CI fixture supplies Supabase Auth, roles and Storage compatibility');
+  check(postgresSmoke.includes('public.create_order_protected')
+    && postgresSmoke.includes('public.seller_update_order_status')
+    && postgresSmoke.includes('public.admin_review_store')
+    && postgresSmoke.includes('storage.objects')
+    && postgresSmoke.includes('another seller'),
+    'PostgreSQL smoke tests cover checkout, tenant isolation, order workflow, admin and Storage');
+  check(workflow.includes('image: postgres:16')
+    && workflow.includes('tests/postgres/supabase_stub.sql')
+    && workflow.includes('supabase/verify_installation.sql')
+    && workflow.includes('tests/postgres/smoke.sql'),
+    'GitHub Actions runs real PostgreSQL migrations and integration smoke tests');
 } catch (error) {
   errors.push('Yoxlama icra edilərkən xəta: ' + error.message);
 } finally {
