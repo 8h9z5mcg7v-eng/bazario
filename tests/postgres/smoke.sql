@@ -87,6 +87,29 @@ update public.products
 set price = 999.00
 where id = '20000000-0000-4000-8000-000000000002';
 
+-- A seller must not transfer a product to another store or edit approval state directly.
+do $$
+begin
+  begin
+    update public.products
+    set store_id = '10000000-0000-4000-8000-000000000002'
+    where id = '20000000-0000-4000-8000-000000000001';
+    raise exception 'Seller transferred a product to another store' using errcode = 'P0002';
+  exception when insufficient_privilege then
+    null;
+  end;
+
+  begin
+    update public.stores
+    set status = 'suspended'
+    where id = '10000000-0000-4000-8000-000000000001';
+    raise exception 'Seller changed store approval status directly' using errcode = 'P0002';
+  exception when insufficient_privilege then
+    null;
+  end;
+end;
+$$;
+
 select public.seller_update_order_status(
   '30000000-0000-4000-8000-000000000001',
   'confirmed'
@@ -111,6 +134,14 @@ do $$
 begin
   if (select price from public.products where id = '20000000-0000-4000-8000-000000000002') <> 30.00 then
     raise exception 'Seller changed another seller''s product';
+  end if;
+  if (select store_id from public.products where id = '20000000-0000-4000-8000-000000000001')
+     <> '10000000-0000-4000-8000-000000000001' then
+    raise exception 'Seller changed product ownership';
+  end if;
+  if (select status from public.stores where id = '10000000-0000-4000-8000-000000000001')
+     <> 'approved' then
+    raise exception 'Seller changed store approval state';
   end if;
   if (select status from public.orders where id = '30000000-0000-4000-8000-000000000001') <> 'confirmed' then
     raise exception 'Seller order status RPC did not update the owned order';
