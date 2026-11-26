@@ -376,8 +376,9 @@ function renderTab(tab){
       $('#storeSettingsForm').addEventListener('submit',saveBackendStoreSettings);
     }else{
       const url=storeShareUrl(data.slug);
-      c.innerHTML='<h3>Mağaza linkin</h3><p class="hint">Bu link yalnız admin təsdiqindən sonra ictimai məhsul vitrininə aparacaq.</p><div class="store-link">'+esc(url)+'</div><button class="btn btn-primary" id="copyStoreLink" style="margin-top:12px">Linki kopyala</button><p class="hint" style="margin-top:14px">Status: <b>'+esc(statusLabel(data.status))+'</b></p>';
+      c.innerHTML='<h3>Mağaza linkin</h3><p class="hint">Bu link yalnız admin təsdiqindən sonra ictimai məhsul vitrininə aparacaq.</p><div class="store-link">'+esc(url)+'</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn-primary" id="shareStoreLink">Paylaş</button><button class="btn btn-outline" id="copyStoreLink" style="background:#fff;color:#172033;border:1px solid var(--line)">Linki kopyala</button></div><p class="hint" style="margin-top:14px">Status: <b>'+esc(statusLabel(data.status))+'</b></p>';
       $('#copyStoreLink').onclick=()=>copyStoreShareUrl(url);
+      $('#shareStoreLink').onclick=()=>shareStoreShareUrl(url);
     }
     return;
   }
@@ -415,6 +416,17 @@ async function copyStoreShareUrl(url){
     else{window.prompt('Mağaza linkini kopyala:',url);return;}
     alert('Mağaza linki kopyalandı.');
   }catch(error){window.prompt('Mağaza linkini kopyala:',url);}
+}
+async function shareStoreShareUrl(url){
+  if(typeof navigator.share==='function'){
+    try{
+      await navigator.share({title:data.shop+' — BAZARIO',text:'Mağazama bax:',url});
+      return;
+    }catch(error){
+      if(error&&error.name==='AbortError')return;
+    }
+  }
+  await copyStoreShareUrl(url);
 }
 async function refreshBackendData(){
   if(!data||!data.backend||!supabaseClient)return;
