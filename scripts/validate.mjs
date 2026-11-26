@@ -139,6 +139,14 @@ try {
     && authFrontend.includes('auth.updateUser({password})'),
     'Satıcı şifəsinin e-poçtla bərpası və yeni şifrə təyin etmə axını mövcuddur');
 
+  const shareUi = readFileSync(join(root, 'index.html'), 'utf8');
+  check(shareUi.includes('id="shareStoreLink"')
+    && shareUi.includes("navigator.share")
+    && shareUi.includes('async function shareStoreShareUrl')
+    && shareUi.includes("$('#shareStoreLink').onclick")
+    && shareUi.includes('await copyStoreShareUrl(url)'),
+    'iPhone mağaza linki native paylaşım pəncərəsini və kopyalama ehtiyat yolunu dəstəkləyir');
+
   const storeSettingsUi = readFileSync(join(root, 'index.html'), 'utf8');
   check(storeSettingsUi.includes('data-tab="settings"')
     && storeSettingsUi.includes('id="storeSettingsForm"')
