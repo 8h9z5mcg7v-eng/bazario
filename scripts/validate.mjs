@@ -2,6 +2,7 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'n
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { runInNewContext } from 'node:vm';
 
 const root = process.cwd();
 const errors = [];
@@ -146,6 +147,125 @@ try {
     && shareUi.includes("$('#shareStoreLink').onclick")
     && shareUi.includes('await copyStoreShareUrl(url)'),
     'iPhone mağaza linki native paylaşım pəncərəsini və kopyalama ehtiyat yolunu dəstəkləyir');
+
+  const shareStart = productUi.indexOf('function storeShareUrl(slug){');
+  const shareEnd = productUi.indexOf('async function refreshBackendData(){', shareStart);
+  check(shareStart >= 0 && shareEnd > shareStart,
+    'Mağaza paylaşım funksiyaları ayrıca davranış sınağı üçün tapıldı');
+  if (shareStart >= 0 && shareEnd > shareStart) {
+    const shareSource = productUi.slice(shareStart, shareEnd);
+    function shareHarness({ nativeShare = false, clipboard = false, secure = true, shareError = null, clipboardError = null } = {}) {
+      const events = { shares: [], copies: [], prompts: [], alerts: [] };
+      const context = {
+        URL,
+        data: { shop: 'Sınaq mağazası' },
+        window: {
+          location: { href: 'https://bazario.example/?campaign=summer#top' },
+          isSecureContext: secure,
+          prompt: (message, value) => events.prompts.push({ message, value })
+        },
+        navigator: {},
+        alert: message => events.alerts.push(message)
+      };
+      if (nativeShare) {
+        context.navigator.share = async payload => {
+          events.shares.push(payload);
+          if (shareError) throw shareError;
+        };
+      }
+      if (clipboard) {
+        context.navigator.clipboard = {
+          writeText: async value => {
+            events.copies.push(value);
+            if (clipboardError) throw clipboardError;
+          }
+        };
+      }
+      runInNewContext(shareSource, context);
+      return { context, events };
+    }
+    async function runShareCase(name, action) {
+      try {
+        await action();
+        check(true, name);
+      } catch (error) {
+        check(false, name + ': ' + error.message);
+      }
+    }
+
+    await runShareCase('Mağaza linki mövcud query parametrini saxlayır, shop parametrini əlavə edir və hash-i silir', async () => {
+      const harness = shareHarness();
+      const url = new URL(harness.context.storeShareUrl('test-store'));
+      if (url.searchParams.get('shop') !== 'test-store'
+        || url.searchParams.get('campaign') !== 'summer'
+        || url.hash !== '') throw new Error('URL gözlənilən formada qurulmadı');
+    });
+
+    await runShareCase('iPhone native paylaşımı düzgün başlıq, mətn və linklə çağırılır', async () => {
+      const harness = shareHarness({ nativeShare: true, clipboard: true });
+      const url = 'https://bazario.example/?shop=test-store';
+      await harness.context.shareStoreShareUrl(url);
+      const payload = harness.events.shares[0];
+      if (harness.events.shares.length !== 1 || payload?.url !== url
+        || payload?.title !== 'Sınaq mağazası — BAZARIO'
+        || payload?.text !== 'Mağazama bax:' || harness.events.copies.length !== 0) {
+        throw new Error('Native paylaşım payload-u və ya çağırış sayı yanlışdır');
+      }
+    });
+
+    await runShareCase('İstifadəçi native paylaşımı ləğv etdikdə ehtiyat kopyalama açılmır', async () => {
+      const abort = new Error('İstifadəçi paylaşımı bağladı');
+      abort.name = 'AbortError';
+      const harness = shareHarness({ nativeShare: true, clipboard: true, shareError: abort });
+      await harness.context.shareStoreShareUrl('https://bazario.example/?shop=test-store');
+      if (harness.events.copies.length || harness.events.prompts.length) {
+        throw new Error('Ləğv edilmiş paylaşım kopyalama pəncərəsi açdı');
+      }
+    });
+
+    await runShareCase('Native paylaşım olmadıqda təhlükəsiz clipboard kopyalaması işləyir', async () => {
+      const harness = shareHarness({ clipboard: true, secure: true });
+      const url = 'https://bazario.example/?shop=test-store';
+      await harness.context.shareStoreShareUrl(url);
+      if (harness.events.copies[0] !== url
+        || harness.events.alerts.length !== 1 || harness.events.prompts.length) {
+        throw new Error('Clipboard ehtiyat yolu işləmədi');
+      }
+    });
+
+    await runShareCase('Native paylaşım xətası clipboard ehtiyat yoluna keçir', async () => {
+      const harness = shareHarness({
+        nativeShare: true, clipboard: true, shareError: new Error('Share unavailable')
+      });
+      const url = 'https://bazario.example/?shop=test-store';
+      await harness.context.shareStoreShareUrl(url);
+      if (harness.events.shares.length !== 1 || harness.events.copies[0] !== url) {
+        throw new Error('Native paylaşım xətasından sonra kopyalama baş vermədi');
+      }
+    });
+
+    await runShareCase('HTTPS olmayan kontekstdə link prompt vasitəsilə təqdim olunur', async () => {
+      const harness = shareHarness({ clipboard: true, secure: false });
+      const url = 'http://localhost/?shop=test-store';
+      await harness.context.copyStoreShareUrl(url);
+      if (harness.events.prompts.length !== 1
+        || harness.events.prompts[0].value !== url || harness.events.copies.length) {
+        throw new Error('Təhlükəsiz olmayan kontekst üçün prompt ehtiyat yolu işləmədi');
+      }
+    });
+
+    await runShareCase('Clipboard xətası linki prompt ilə əl ilə kopyalamağa imkan verir', async () => {
+      const harness = shareHarness({
+        clipboard: true, secure: true, clipboardError: new Error('Clipboard blocked')
+      });
+      const url = 'https://bazario.example/?shop=test-store';
+      await harness.context.copyStoreShareUrl(url);
+      if (harness.events.prompts.length !== 1
+        || harness.events.prompts[0].value !== url) {
+        throw new Error('Clipboard xətasından sonra prompt açılmadı');
+      }
+    });
+  }
 
   const storeSettingsUi = readFileSync(join(root, 'index.html'), 'utf8');
   check(storeSettingsUi.includes('data-tab="settings"')
