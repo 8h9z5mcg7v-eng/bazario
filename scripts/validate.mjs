@@ -294,11 +294,11 @@ try {
   check(adminEscapedFields.every(fragment => adminUi.includes(fragment)),
     'Admin müraciətlərində mağaza adı, ünvan, təsvir, satıcı ID-si və tarix HTML kimi escape edilir');
 
-  const escapeHtmlSource = adminUi.match(/function escapeHtml\\(value\\)\\s*\\{[\\s\\S]*?\\n\\}/)?.[0];
+  const escapeHtmlSource = adminUi.match(/function escapeHtml\(value\)\s*\{[\s\S]*?\n\}/)?.[0];
   if (escapeHtmlSource) {
     const hostileAdminText = '<img src=x onerror="alert(1)"> & \'store\'';
     const escapedAdminText = runInNewContext(
-      escapeHtmlSource + '\\nescapeHtml(' + JSON.stringify(hostileAdminText) + ')'
+      escapeHtmlSource + '\nescapeHtml(' + JSON.stringify(hostileAdminText) + ')'
     );
     check(escapedAdminText === '&lt;img src=x onerror=&quot;alert(1)&quot;&gt; &amp; &#39;store&#39;',
       'Admin HTML escape funksiyası XSS payload-unu mətnə çevirir');
