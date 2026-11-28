@@ -275,6 +275,37 @@ try {
     && storeSettingsUi.includes("normalizeSlug($('#settingsStoreSlug').value)"),
     'Satıcı mağaza adını, unikal ünvanını və təsvirini təhlükəsiz yeniləyə bilir');
 
+  const adminUi = readFileSync(join(root, 'admin.html'), 'utf8');
+  const adminRoleCheck = adminUi.indexOf("client.rpc('current_user_is_admin')");
+  const adminPanelReveal = adminUi.indexOf("$('#adminPanel').classList.remove('hidden')");
+  check(adminRoleCheck >= 0 && adminPanelReveal > adminRoleCheck
+    && adminUi.includes("client.rpc('admin_review_store'")
+    && adminUi.includes("await client.auth.signOut()")
+    && !adminUi.includes(".from('stores').update("),
+    'Admin paneli rolu serverdə yoxlayır, qərarı qorunan RPC ilə verir və birbaşa status yazmır');
+
+  const adminEscapedFields = [
+    'escapeHtml(store.name)',
+    'escapeHtml(store.slug)',
+    'escapeHtml(store.description||',
+    'escapeHtml(store.owner_id)',
+    'escapeHtml(date)'
+  ];
+  check(adminEscapedFields.every(fragment => adminUi.includes(fragment)),
+    'Admin müraciətlərində mağaza adı, ünvan, təsvir, satıcı ID-si və tarix HTML kimi escape edilir');
+
+  const escapeHtmlSource = adminUi.match(/function escapeHtml\\(value\\)\\s*\\{[\\s\\S]*?\\n\\}/)?.[0];
+  if (escapeHtmlSource) {
+    const hostileAdminText = '<img src=x onerror="alert(1)"> & \'store\'';
+    const escapedAdminText = runInNewContext(
+      escapeHtmlSource + '\\nescapeHtml(' + JSON.stringify(hostileAdminText) + ')'
+    );
+    check(escapedAdminText === '&lt;img src=x onerror=&quot;alert(1)&quot;&gt; &amp; &#39;store&#39;',
+      'Admin HTML escape funksiyası XSS payload-unu mətnə çevirir');
+  } else {
+    check(false, 'Admin HTML escape funksiyası sınaq üçün tapıldı');
+  }
+
   const publicFiles = ['index.html', 'admin.html', 'supabase/config.js'];
   for (const file of publicFiles) {
     const source = readFileSync(join(root, file), 'utf8');
