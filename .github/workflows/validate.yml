@@ -1,0 +1,46 @@
+name: Validate BAZARIO draft
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feature/supabase-auth-scaffold]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: bazario_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d bazario_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Validate frontend, SQL structure and test coverage
+        run: node scripts/validate.mjs
+      - name: Apply migrations and run PostgreSQL smoke tests
+        run: |
+          POSTGRES_CONTAINER_ID="$(docker ps --filter 'ancestor=postgres:16' --format '{{.ID}}' | head -n 1)"
+          test -n "$POSTGRES_CONTAINER_ID"
+          docker exec -i "$POSTGRES_CONTAINER_ID" psql -U postgres -d bazario_test --set ON_ERROR_STOP=1 < tests/postgres/supabase_stub.sql
+          for migration in supabase/migrations/*.sql; do
+            echo "Applying $migration"
+            docker exec -i "$POSTGRES_CONTAINER_ID" psql -U postgres -d bazario_test --set ON_ERROR_STOP=1 < "$migration"
+          done
+          docker exec -i "$POSTGRES_CONTAINER_ID" psql -U postgres -d bazario_test --set ON_ERROR_STOP=1 < supabase/verify_installation.sql
+          docker exec -i "$POSTGRES_CONTAINER_ID" psql -U postgres -d bazario_test --set ON_ERROR_STOP=1 < tests/postgres/smoke.sql
